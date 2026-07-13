@@ -1,0 +1,253 @@
+zabbix_export:
+  version: "6.4"
+  template_groups:
+    - uuid: 846977d1dfed4968bc5f8bdb363285ba
+      name: "SmartCare/Devices"
+  templates:
+    - uuid: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6
+      template: "Template SmartCare mmWave Radar"
+      name: "Template SmartCare mmWave Radar"
+      description: |
+        智慧养老毫米波雷达监控模板。
+        通过 Zabbix Trapper 接收雷达数据（跌倒/心率/呼吸/在床/活动量）。
+        每个老人对应一个 Zabbix Host，需设置 {$ELDER_ID} 宏。
+      groups:
+        - name: "SmartCare/Devices"
+      macros:
+        - macro: "{$ELDER_ID}"
+          value: "1"
+          description: "老人数据库主键 ID（必须与数据库 t_elderly.id 一致）"
+        - macro: "{$ELDER_NAME}"
+          value: ""
+          description: "老人姓名"
+        - macro: "{$ROOM_NO}"
+          value: ""
+          description: "房间号"
+        - macro: "{$DEVICE_SN}"
+          value: ""
+          description: "雷达设备序列号"
+        - macro: "{$FALL_SEVERITY}"
+          value: "5"
+          description: "跌倒告警严重等级（0-5）"
+        - macro: "{$HEART_RATE_LOW}"
+          value: "40"
+          description: "心率过低阈值 (bpm)"
+        - macro: "{$HEART_RATE_HIGH}"
+          value: "120"
+          description: "心率过高阈值 (bpm)"
+        - macro: "{$BREATH_RATE_LOW}"
+          value: "8"
+          description: "呼吸过低阈值 (次/分钟)"
+        - macro: "{$BREATH_RATE_HIGH}"
+          value: "30"
+          description: "呼吸过高阈值 (次/分钟)"
+        - macro: "{$OFFLINE_TIMEOUT}"
+          value: "5m"
+          description: "设备离线告警超时"
+      items:
+        - uuid: item-uuid-main-data
+          name: "雷达主数据"
+          type: TRAP
+          key: "elder.radar.main_data[{$ELDER_ID}]"
+          delay: "0"
+          history: "7d"
+          trends: "0"
+          value_type: TEXT
+          description: "完整雷达感知数据 JSON"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-fall-status
+          name: "跌倒状态"
+          type: DEPENDENT
+          key: "elder.radar.fall_status[{$ELDER_ID}]"
+          delay: "0"
+          history: "90d"
+          trends: "0"
+          value_type: UNSIGNED
+          description: "0=正常 1=跌倒"
+          master_item:
+            key: "elder.radar.main_data[{$ELDER_ID}]"
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - "$.data.fall_status"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-heart-rate
+          name: "心率"
+          type: DEPENDENT
+          key: "elder.radar.heart_rate[{$ELDER_ID}]"
+          delay: "0"
+          history: "90d"
+          trends: "365d"
+          value_type: FLOAT
+          units: "bpm"
+          master_item:
+            key: "elder.radar.main_data[{$ELDER_ID}]"
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - "$.data.heart_rate"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-breath-rate
+          name: "呼吸率"
+          type: DEPENDENT
+          key: "elder.radar.breath_rate[{$ELDER_ID}]"
+          delay: "0"
+          history: "90d"
+          trends: "365d"
+          value_type: FLOAT
+          units: "rpm"
+          master_item:
+            key: "elder.radar.main_data[{$ELDER_ID}]"
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - "$.data.breath_rate"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-activity-level
+          name: "活动量指数"
+          type: DEPENDENT
+          key: "elder.radar.activity_level[{$ELDER_ID}]"
+          delay: "0"
+          history: "90d"
+          trends: "365d"
+          value_type: FLOAT
+          units: "%"
+          master_item:
+            key: "elder.radar.main_data[{$ELDER_ID}]"
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - "$.data.activity_level"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-in-bed
+          name: "在床状态"
+          type: DEPENDENT
+          key: "elder.radar.in_bed[{$ELDER_ID}]"
+          delay: "0"
+          history: "90d"
+          trends: "0"
+          value_type: UNSIGNED
+          description: "0=离床 1=在床"
+          master_item:
+            key: "elder.radar.main_data[{$ELDER_ID}]"
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - "$.data.in_bed"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-body-posture
+          name: "体态"
+          type: DEPENDENT
+          key: "elder.radar.body_posture[{$ELDER_ID}]"
+          delay: "0"
+          history: "90d"
+          trends: "0"
+          value_type: CHAR
+          description: "standing/sitting/lying/walking"
+          master_item:
+            key: "elder.radar.main_data[{$ELDER_ID}]"
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - "$.data.body_posture"
+          applications:
+            - name: "Radar Data"
+        - uuid: item-uuid-online
+          name: "雷达设备在线"
+          type: TRAP
+          key: "elder.radar.online[{$ELDER_ID}]"
+          delay: "0"
+          history: "7d"
+          trends: "0"
+          value_type: UNSIGNED
+          description: "1=在线 0=离线"
+          applications:
+            - name: "Radar Data"
+      discovery_rules: []
+      triggers:
+        - uuid: trigger-uuid-fall
+          name: "跌倒告警: {$ELDER_NAME} 房间 {$ROOM_NO}"
+          event_name: "{$ELDER_NAME} 在 {$ROOM_NO} 房间发生跌倒"
+          opdata: "跌倒状态: {{ITEM.LASTVALUE}}"
+          priority: "5"
+          expression: 'last(/Template SmartCare mmWave Radar/elder.radar.fall_status[{$ELDER_ID}])=1'
+          description: "{$ELDER_NAME} 发生跌倒！房间: {$ROOM_NO}，请立即前往查看！"
+          manual_close: "1"
+          status: 0
+          dependencies: []
+          tags:
+            - tag: elder
+              value: "{$ELDER_ID}"
+            - tag: room
+              value: "{$ROOM_NO}"
+            - tag: type
+              value: fall
+        - uuid: trigger-uuid-heart-rate-low
+          name: "心率过低: {$ELDER_NAME} 房间 {$ROOM_NO}"
+          event_name: "{$ELDER_NAME} 心率过低: {{ITEM.LASTVALUE}} bpm"
+          opdata: "心率: {{ITEM.LASTVALUE}} bpm"
+          priority: "4"
+          expression: 'last(/Template SmartCare mmWave Radar/elder.radar.heart_rate[{$ELDER_ID}])<{$HEART_RATE_LOW}'
+          description: "{$ELDER_NAME} 心率过低: {{ITEM.LASTVALUE}} bpm，房间: {$ROOM_NO}"
+          manual_close: "1"
+          status: 0
+          dependencies: []
+          tags:
+            - tag: elder
+              value: "{$ELDER_ID}"
+            - tag: type
+              value: heart_rate_low
+        - uuid: trigger-uuid-heart-rate-high
+          name: "心率过高: {$ELDER_NAME} 房间 {$ROOM_NO}"
+          event_name: "{$ELDER_NAME} 心率过高: {{ITEM.LASTVALUE}} bpm"
+          opdata: "心率: {{ITEM.LASTVALUE}} bpm"
+          priority: "4"
+          expression: 'last(/Template SmartCare mmWave Radar/elder.radar.heart_rate[{$ELDER_ID}])>{$HEART_RATE_HIGH}'
+          description: "{$ELDER_NAME} 心率过高: {{ITEM.LASTVALUE}} bpm，房间: {$ROOM_NO}"
+          manual_close: "1"
+          status: 0
+          dependencies: []
+          tags:
+            - tag: elder
+              value: "{$ELDER_ID}"
+            - tag: type
+              value: heart_rate_high
+        - uuid: trigger-uuid-breath-low
+          name: "呼吸过低: {$ELDER_NAME} 房间 {$ROOM_NO}"
+          event_name: "{$ELDER_NAME} 呼吸过低: {{ITEM.LASTVALUE}} rpm"
+          opdata: "呼吸率: {{ITEM.LASTVALUE}} rpm"
+          priority: "4"
+          expression: 'last(/Template SmartCare mmWave Radar/elder.radar.breath_rate[{$ELDER_ID}])<{$BREATH_RATE_LOW}'
+          description: "{$ELDER_NAME} 呼吸率过低，房间: {$ROOM_NO}"
+          manual_close: "1"
+          status: 0
+          dependencies: []
+          tags:
+            - tag: elder
+              value: "{$ELDER_ID}"
+            - tag: type
+              value: breath_low
+        - uuid: trigger-uuid-offline
+          name: "设备离线: {$ELDER_NAME} 房间 {$ROOM_NO}"
+          event_name: "{$ELDER_NAME} 雷达设备离线超过 {$OFFLINE_TIMEOUT}"
+          opdata: "上次在线: {ITEM.LASTHOST}"
+          priority: "2"
+          expression: 'nodata(/Template SmartCare mmWave Radar/elder.radar.online[{$ELDER_ID}],{$OFFLINE_TIMEOUT})=1'
+          description: "{$ELDER_NAME} 房间雷达设备超过 {$OFFLINE_TIMEOUT} 无数据"
+          manual_close: "1"
+          status: 0
+          dependencies: []
+          tags:
+            - tag: elder
+              value: "{$ELDER_ID}"
+            - tag: type
+              value: offline
+      graphs: []
+      dashboards: []
+      value_maps: []

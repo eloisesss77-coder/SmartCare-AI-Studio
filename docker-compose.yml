@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smartcare-backend
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DATABASE_URL: ${SMARTCARE_DB_URL:-mysql+pymysql://smartcare:CHANGE_ME_PLEASE@host.docker.internal:3306/smartcare}
+      ZABBIX_SERVER: ${ZABBIX_SERVER:-127.0.0.1}
+      ZABBIX_API_URL: ${ZABBIX_API_URL:-http://127.0.0.1/zabbix/api_jsonrpc.php}
+      ZABBIX_USER: ${ZABBIX_USER:-Admin}
+      ZABBIX_PASSWORD: ${ZABBIX_PASSWORD:-zabbix}
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+      DINGTALK_WEBHOOK_URL: ${DINGTALK_WEBHOOK_URL:-}
+      WECOM_WEBHOOK_URL: ${WECOM_WEBHOOK_URL:-}
+      WECHAT_APPID: ${WECHAT_APPID:-}
+      WECHAT_SECRET: ${WECHAT_SECRET:-}
+      WECHAT_TEMPLATE_ALERT: ${WECHAT_TEMPLATE_ALERT:-}
+      WECHAT_TEMPLATE_HEALTH: ${WECHAT_TEMPLATE_HEALTH:-}
+      TZ: Asia/Shanghai
+    # 8000 仅宿主机本地访问(Zabbix Webhook/采集器)，不暴露公网
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - smartcare-network
+
+  frontend:
+    image: nginx:alpine
+    container_name: smartcare-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - smartcare-network
+
+networks:
+  smartcare-network:
+    driver: bridge

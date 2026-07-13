@@ -1,0 +1,40 @@
+# 雷达采集服务配置
+service:
+  name: "SmartCare Radar Collector"
+  institution_id: "INST001"
+  mode: "simulator"  # simulator 或 production
+
+mqtt:
+  broker: "localhost"
+  port: 1883
+  username: "smartcare"
+  password: ""
+  # 雷达数据 Topic 模板: smartcare/{institution_id}/{elder_id}/radar/data
+
+zabbix:
+  server: "localhost"
+  port: 10051
+
+backend_api:
+  url: "http://localhost:8000/api/v1/radar/data"
+
+simulator:
+  elderly_count: 3
+  interval: 5  # 数据上报间隔（秒）
+  fall_probability: 0.02  # 跌倒概率（每次采样）
+  rooms: ["101", "102", "103"]
+
+# 老人配置（id 必须是数据库 t_elderly 表的真实主键）
+elderly:
+  - id: 1
+    name: "张大爷"
+    room: "101"
+    device_sn: "RADAR-2024001"
+  - id: 2
+    name: "李奶奶"
+    room: "102"
+    device_sn: "RADAR-2024002"
+  - id: 3
+    name: "王大爷"
+    room: "103"
+    device_sn: "RADAR-2024003"
