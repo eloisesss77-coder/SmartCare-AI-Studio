@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.config import APP_NAME, APP_VERSION, APP_DEBUG
 from app.database import engine, Base
@@ -20,6 +21,25 @@ logger = logging.getLogger(__name__)
 active_ws_connections: list[WebSocket] = []
 
 
+# 启动健康日报调度器
+scheduler = BackgroundScheduler()
+
+
+def start_daily_report_scheduler():
+    """启动健康日报定时任务：每天早上8:00执行"""
+    from app.services.daily_report import generate_daily_reports
+    scheduler.add_job(
+        generate_daily_reports,
+        trigger="cron",
+        hour=8,
+        minute=0,
+        id="daily_health_report",
+        replace_existing=True,
+    )
+    scheduler.start()
+    logger.info("健康日报调度器已启动，计划每天 08:00 执行")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
@@ -27,7 +47,17 @@ async def lifespan(app: FastAPI):
     # 启动时自动创建数据库表
     Base.metadata.create_all(bind=engine)
     logger.info("数据库表创建/检查完成")
+
+    # 启动健康日报定时任务
+    start_daily_report_scheduler()
+
     yield
+
+    # 关闭调度器
+    if scheduler.running:
+        scheduler.shutdown(wait=False)
+        logger.info("健康日报调度器已停止")
+
     logger.info(f"{APP_NAME} 正在关闭")
 
 
@@ -66,6 +96,14 @@ app.include_router(devices.router)
 def health_check():
     """健康检查接口"""
     return {"status": "ok", "service": APP_NAME, "version": APP_VERSION}
+
+
+@app.post("/api/admin/trigger-daily-report")
+def trigger_daily_report():
+    """手动触发健康日报生成（管理/调试用）"""
+    from app.services.daily_report import generate_daily_reports
+    generate_daily_reports()
+    return {"status": "ok", "message": "日报已触发，请查看日志"}
 
 
 # ---------------------------------------------------------------

@@ -1,4 +1,4 @@
-"""家属管理路由：注册/登录、绑定码机制、绑定/解绑老人"""
+"""家属管理路由：注册/登录、绑定码机制、绑定/解绑老人、我的老人列表"""
 import logging
 import random
 import string
@@ -6,9 +6,13 @@ from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Header
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 from app.database import get_db
-from app.models import Family, FamilyElderly, Elderly, User, BindCode
+from app.models import (
+    Family, FamilyElderly, Elderly, User, BindCode,
+    RadarData, DeviceGeneric, AlertRecord,
+)
 from app.schemas import (
     ApiResponse,
     FamilyCreate,
@@ -90,6 +94,111 @@ def register_or_login(
         "phone": family.phone,
         "elderlyList": elderly_list,
     })
+
+
+# ---------------------------------------------------------------
+# 小程序首页：获取当前家属绑定的所有老人 + 实时数据
+# ---------------------------------------------------------------
+
+@router.get("/my-elderly", response_model=ApiResponse)
+def get_my_elderly(
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """
+    小程序首页核心接口：获取家属绑定的所有老人，
+    每人附带最新雷达数据、关联设备列表、未读告警数。
+    一次请求即可渲染首页。
+    """
+    # 验证家属账号
+    family = db.query(Family).filter(Family.id == x_family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="家属账号不存在")
+
+    # 获取所有绑定关系
+    bindings = (
+        db.query(FamilyElderly, Elderly)
+        .join(Elderly, FamilyElderly.elderly_id == Elderly.id)
+        .filter(FamilyElderly.family_id == x_family_id)
+        .all()
+    )
+
+    result = []
+    for b in bindings:
+        elderly = b.Elderly
+        elderly_id = b.FamilyElderly.elderly_id
+
+        # 1) 最新一条雷达数据
+        latest_radar = (
+            db.query(RadarData)
+            .filter(RadarData.elder_id == elderly_id)
+            .order_by(desc(RadarData.timestamp))
+            .first()
+        )
+
+        # 2) 关联的设备列表（通用设备表 + 雷达设备表）
+        generic_devices = (
+            db.query(DeviceGeneric)
+            .filter(DeviceGeneric.elder_id == elderly_id)
+            .all()
+        )
+        device_list = [
+            {
+                "deviceSn": d.device_sn,
+                "deviceName": d.device_name,
+                "deviceCategory": d.device_category,
+                "onlineStatus": d.online_status,
+                "batteryLevel": d.battery_level,
+            }
+            for d in generic_devices
+        ]
+
+        # 3) 未读告警数
+        unread_alerts = (
+            db.query(AlertRecord)
+            .filter(
+                AlertRecord.elder_id == elderly_id,
+                AlertRecord.handled_status == 0,
+            )
+            .count()
+        )
+
+        # 4) 今日告警数
+        today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_alerts = (
+            db.query(AlertRecord)
+            .filter(
+                AlertRecord.elder_id == elderly_id,
+                AlertRecord.created_at >= today_start,
+            )
+            .count()
+        )
+
+        item = {
+            "elderlyId": elderly_id,
+            "elderlyName": elderly.name,
+            "roomNo": elderly.room_no,
+            "age": elderly.age,
+            "gender": elderly.gender,
+            "relation": b.FamilyElderly.relation,
+            "isPrimary": b.FamilyElderly.is_primary,
+            "latestRadarData": {
+                "heartRate": latest_radar.heart_rate if latest_radar else None,
+                "breathRate": latest_radar.breath_rate if latest_radar else None,
+                "fallStatus": latest_radar.fall_status if latest_radar else 0,
+                "inBed": latest_radar.in_bed if latest_radar else 0,
+                "bodyPosture": latest_radar.body_posture if latest_radar else "",
+                "activityLevel": latest_radar.activity_level if latest_radar else "",
+                "timestamp": str(latest_radar.timestamp) if latest_radar and latest_radar.timestamp else None,
+            } if latest_radar else None,
+            "devices": device_list,
+            "unreadAlerts": unread_alerts,
+            "todayAlerts": today_alerts,
+            "status": "normal",  # 正常 / warning / danger，由前端根据 fallStatus + unreadAlerts 判定
+        }
+        result.append(item)
+
+    return ApiResponse(data=result)
 
 
 # ---------------------------------------------------------------

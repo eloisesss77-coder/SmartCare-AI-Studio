@@ -25,6 +25,9 @@ class Elderly(Base):
     radar_device_id = Column(BigInteger, default=None, nullable=True, comment="绑定的雷达设备ID")
     status = Column(Integer, default=1, comment="状态: 0禁用, 1启用")
     created_at = Column(DateTime, default=datetime.now, comment="创建时间")
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
+
+    radar_device = relationship("RadarDevice", foreign_keys=[radar_device_id], primaryjoin="Elderly.radar_device_id == RadarDevice.id", lazy="select")
 
 
 # ================================================================
@@ -86,8 +89,6 @@ class BindCode(Base):
     expire_at = Column(DateTime, nullable=False, comment="过期时间(24小时后)")
     created_at = Column(DateTime, default=datetime.now, comment="创建时间")
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
-
-    radar_device = relationship("RadarDevice", foreign_keys=[radar_device_id], primaryjoin="Elderly.radar_device_id == RadarDevice.id", lazy="select")
 
 
 class RadarDevice(Base):

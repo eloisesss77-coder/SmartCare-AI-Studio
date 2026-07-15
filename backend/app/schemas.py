@@ -379,6 +379,11 @@ class DeviceGenericCreate(BaseModel):
     institution_id: Optional[int] = Field(0, description="所属机构ID")
     extra_config: Optional[str] = Field("", description="扩展配置JSON")
 
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
+
 
 class DeviceGenericUpdate(BaseModel):
     """更新设备信息"""
@@ -387,6 +392,11 @@ class DeviceGenericUpdate(BaseModel):
     elder_id: Optional[int] = Field(None, description="关联老人ID")
     extra_config: Optional[str] = Field(None, description="扩展配置JSON")
     status: Optional[int] = Field(None, description="状态")
+
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
 
 
 class DeviceGenericResponse(BaseModel):
@@ -423,6 +433,11 @@ class DeviceDataReport(BaseModel):
     device_category: Optional[str] = Field(None, description="设备大类")
     timestamp: Optional[datetime] = Field(None, description="采集时间戳")
     data: dict = Field(..., description="设备原始数据")
+
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
 
 
 # ============================================================
