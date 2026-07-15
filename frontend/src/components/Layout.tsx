@@ -7,6 +7,8 @@ import {
   TeamOutlined,
   AlertOutlined,
   UserOutlined,
+  ApiOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useAuth } from '@/contexts/AuthContext';
@@ -72,9 +74,19 @@ const AppLayout: React.FC = () => {
       label: '老人管理',
     },
     {
+      key: '/devices',
+      icon: <ApiOutlined />,
+      label: '设备管理',
+    },
+    {
       key: '/alerts',
       icon: <AlertOutlined />,
       label: '告警中心',
+    },
+    {
+      key: '/bind',
+      icon: <LinkOutlined />,
+      label: '家属绑定',
     },
     ...(isAdmin
       ? [

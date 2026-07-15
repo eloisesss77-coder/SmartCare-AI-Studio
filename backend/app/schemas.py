@@ -361,3 +361,99 @@ class FamilyElderlyResponse(BaseModel):
         "alias_generator": to_camel,
         "populate_by_name": True,
     }
+
+
+# ============================================================
+# 通用设备管理
+# ============================================================
+
+class DeviceGenericCreate(BaseModel):
+    """注册新设备"""
+    device_sn: str = Field(..., description="设备序列号")
+    device_name: str = Field("", description="设备名称")
+    device_category: str = Field(..., description="设备大类: radar_fall/radar_bedside/infrared/door_magnet/camera/sos_button/smoke_detector/gas_detector")
+    device_brand: str = Field("", description="品牌")
+    device_model: str = Field("", description="型号")
+    room_no: str = Field("", description="安装房间号")
+    elder_id: Optional[int] = Field(None, description="关联老人ID")
+    institution_id: Optional[int] = Field(0, description="所属机构ID")
+    extra_config: Optional[str] = Field("", description="扩展配置JSON")
+
+
+class DeviceGenericUpdate(BaseModel):
+    """更新设备信息"""
+    device_name: Optional[str] = Field(None, description="设备名称")
+    room_no: Optional[str] = Field(None, description="安装房间号")
+    elder_id: Optional[int] = Field(None, description="关联老人ID")
+    extra_config: Optional[str] = Field(None, description="扩展配置JSON")
+    status: Optional[int] = Field(None, description="状态")
+
+
+class DeviceGenericResponse(BaseModel):
+    """设备信息响应"""
+    id: int
+    device_sn: str
+    device_name: str
+    device_category: str
+    device_brand: str = ""
+    device_model: str = ""
+    room_no: str = ""
+    elder_id: Optional[int] = None
+    elder_name: str = ""
+    institution_id: int = 0
+    online_status: int = 0
+    battery_level: Optional[int] = None
+    signal_strength: Optional[int] = None
+    last_heartbeat: Optional[datetime] = None
+    extra_config: str = ""
+    status: int = 1
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = {
+        "from_attributes": True,
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
+
+
+class DeviceDataReport(BaseModel):
+    """设备数据上报（NB-IoT 直连 或 网关转发）"""
+    device_sn: str = Field(..., description="设备序列号")
+    device_category: Optional[str] = Field(None, description="设备大类")
+    timestamp: Optional[datetime] = Field(None, description="采集时间戳")
+    data: dict = Field(..., description="设备原始数据")
+
+
+# ============================================================
+# 家属绑定码
+# ============================================================
+
+class GenerateBindCodeRequest(BaseModel):
+    """管理端生成绑定码"""
+    elderly_id: int = Field(..., alias="elderlyId")
+    relation: str = Field("子女", description="预设关系")
+
+
+class UseBindCodeRequest(BaseModel):
+    """小程序端使用绑定码"""
+    bind_code: str = Field(..., alias="bindCode")
+    relation: str = Field("子女", description="关系")
+
+
+class BindCodeResponse(BaseModel):
+    id: int
+    bind_code: str
+    elderly_id: int
+    elderly_name: str = ""
+    room_no: str = ""
+    relation: str = ""
+    is_used: int = 0
+    expire_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+
+    model_config = {
+        "from_attributes": True,
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }

@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import APP_NAME, APP_VERSION, APP_DEBUG
 from app.database import engine, Base
-from app.routers import elderly, radar, alerts, dashboard, auth, users, family
+from app.routers import elderly, radar, alerts, dashboard, auth, users, family, devices
 
 # 配置日志
 logging.basicConfig(
@@ -55,6 +55,7 @@ app.include_router(dashboard.router)
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(family.router)
+app.include_router(devices.router)
 
 
 # ---------------------------------------------------------------

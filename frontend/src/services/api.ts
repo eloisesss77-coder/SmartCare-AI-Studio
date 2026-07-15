@@ -16,6 +16,10 @@ import type {
   UserInfo,
   UserRecord,
   ChangePasswordRequest,
+  DeviceGeneric,
+  DeviceCategory,
+  DeviceStatsSummary,
+  BindCodeResponse,
 } from '@/types';
 
 const instance: AxiosInstance = axios.create({
@@ -169,5 +173,51 @@ export const getAlertDetail = (id: number): Promise<ApiResponse<AlertRecord>> =>
 
 export const handleAlert = (id: number, data: HandleAlertRequest): Promise<ApiResponse<null>> =>
   instance.put(`/alerts/${id}/handle`, data).then((res) => res.data);
+
+// ==================== 通用设备管理（NEW） ====================
+
+export const getDeviceCategories = (): Promise<ApiResponse<DeviceCategory[]>> =>
+  instance.get('/devices/categories').then((res) => res.data);
+
+export const getDeviceList = (params: {
+  page: number;
+  pageSize: number;
+  category?: string;
+  roomNo?: string;
+  onlineStatus?: number;
+}): Promise<ApiResponse<PaginatedResponse<DeviceGeneric>>> =>
+  instance.get('/devices', { params }).then((res) => res.data);
+
+export const getDeviceDetail = (id: number): Promise<ApiResponse<DeviceGeneric>> =>
+  instance.get(`/devices/${id}`).then((res) => res.data);
+
+export const registerDevice = (data: {
+  deviceSn: string;
+  deviceName?: string;
+  deviceCategory: string;
+  deviceBrand?: string;
+  deviceModel?: string;
+  roomNo?: string;
+  elderId?: number;
+  extraConfig?: string;
+}): Promise<ApiResponse<{ id: number; deviceSn: string }>> =>
+  instance.post('/devices', data).then((res) => res.data);
+
+export const updateDevice = (id: number, data: Partial<DeviceGeneric>): Promise<ApiResponse<null>> =>
+  instance.put(`/devices/${id}`, data).then((res) => res.data);
+
+export const deleteDevice = (id: number): Promise<ApiResponse<null>> =>
+  instance.delete(`/devices/${id}`).then((res) => res.data);
+
+export const getDeviceStats = (): Promise<ApiResponse<DeviceStatsSummary>> =>
+  instance.get('/devices/stats/summary').then((res) => res.data);
+
+export const sendDeviceCommand = (id: number, command: Record<string, unknown>): Promise<ApiResponse<null>> =>
+  instance.post(`/devices/${id}/command`, command).then((res) => res.data);
+
+// ==================== 家属绑定码（NEW） ====================
+
+export const generateBindCode = (data: { elderlyId: number; relation: string }): Promise<ApiResponse<BindCodeResponse>> =>
+  instance.post('/family/generate-bind-code', data).then((res) => res.data);
 
 export default instance;

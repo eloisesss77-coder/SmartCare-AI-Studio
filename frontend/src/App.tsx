@@ -7,6 +7,8 @@ import ElderlyList from '@/pages/ElderlyList';
 import ElderlyDetail from '@/pages/ElderlyDetail';
 import AlertCenter from '@/pages/AlertCenter';
 import UserManagement from '@/pages/UserManagement';
+import DeviceManagement from '@/pages/DeviceManagement';
+import BindManagement from '@/pages/BindManagement';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -29,7 +31,9 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/elderly" element={<ElderlyList />} />
         <Route path="/elderly/:id" element={<ElderlyDetail />} />
+        <Route path="/devices" element={<DeviceManagement />} />
         <Route path="/alerts" element={<AlertCenter />} />
+        <Route path="/bind" element={<BindManagement />} />
         <Route path="/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

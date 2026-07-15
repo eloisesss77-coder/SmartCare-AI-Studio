@@ -32,7 +32,7 @@ export interface AlertRecord {
   elderId: number;
   elderName: string;
   roomNo: string;
-  alertType: string;       // fall/heart_rate/breath_rate/inactivity/offline
+  alertType: string;       // fall/heart_rate/breath_rate/inactivity/offline/manual_sos/smoke_alarm/gas_leak/door_open_long
   alertLevel: string;       // info/warning/critical/emergency
   alertMessage: string;
   triggerValue: string;
@@ -76,6 +76,8 @@ export interface ApiResponse<T> {
 export interface PaginatedResponse<T> {
   list: T[];
   total: number;
+  page?: number;
+  pageSize?: number;
 }
 
 export interface RadarDevice {
@@ -88,11 +90,70 @@ export interface RadarDevice {
   createdAt: string;
 }
 
+// ==================== 通用设备 ====================
+
+export interface DeviceGeneric {
+  id: number;
+  deviceSn: string;
+  deviceName: string;
+  deviceCategory: string;  // radar_fall/radar_bedside/infrared/door_magnet/camera/sos_button/smoke_detector/gas_detector
+  deviceBrand: string;
+  deviceModel: string;
+  roomNo: string;
+  elderId: number | null;
+  elderName: string;
+  institutionId: number;
+  onlineStatus: number;    // 0=离线 1=在线
+  batteryLevel: number | null;
+  signalStrength: number | null;
+  lastHeartbeat: string | null;
+  extraConfig: string;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DeviceCategory {
+  value: string;
+  label: string;
+  icon: string;
+}
+
+export interface DeviceStatsSummary {
+  totalDevices: number;
+  onlineDevices: number;
+  offlineDevices: number;
+  byCategory: {
+    category: string;
+    label: string;
+    icon: string;
+    total: number;
+    online: number;
+    offline: number;
+  }[];
+}
+
+// ==================== 绑定码 ====================
+
+export interface BindCodeResponse {
+  id: number;
+  bindCode: string;
+  elderlyId: number;
+  elderlyName: string;
+  roomNo: string;
+  relation: string;
+  expireAt: string;
+}
+
+// ==================== 告警 ====================
+
 export interface HandleAlertRequest {
   handledStatus: number;
   handledBy: string;
   handleRemark?: string;
 }
+
+// ==================== 认证 ====================
 
 export interface UserInfo {
   id: number;

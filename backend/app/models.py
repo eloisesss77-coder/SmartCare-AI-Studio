@@ -25,6 +25,66 @@ class Elderly(Base):
     radar_device_id = Column(BigInteger, default=None, nullable=True, comment="绑定的雷达设备ID")
     status = Column(Integer, default=1, comment="状态: 0禁用, 1启用")
     created_at = Column(DateTime, default=datetime.now, comment="创建时间")
+
+
+# ================================================================
+# 通用设备表（整合8种设备类型）
+# ================================================================
+
+class DeviceGeneric(Base):
+    """通用设备表 — 统一管理雷达/红外/门磁/摄像头/SOS/烟雾/煤气"""
+    __tablename__ = "t_device_generic"
+    __table_args__ = (
+        Index("idx_device_sn", "device_sn"),
+        Index("idx_institution", "institution_id"),
+        Index("idx_category", "device_category"),
+        {"comment": "通用设备表"},
+    )
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True, comment="主键ID")
+    device_sn = Column(String(64), nullable=False, unique=True, comment="设备序列号")
+    device_name = Column(String(100), default="", comment="设备名称")
+    device_category = Column(String(30), nullable=False, comment=(
+        "设备大类: radar_fall(卫生间跌倒雷达), radar_bedside(床头心率雷达), "
+        "infrared(红外探测器), door_magnet(门磁), camera(摄像头), "
+        "sos_button(呼叫按钮), smoke_detector(烟雾报警), gas_detector(煤气报警)"
+    ))
+    device_brand = Column(String(50), default="", comment="品牌")
+    device_model = Column(String(50), default="", comment="型号")
+    room_no = Column(String(20), default="", comment="安装房间号")
+    elder_id = Column(BigInteger, default=None, nullable=True, comment="关联老人ID")
+    institution_id = Column(BigInteger, default=0, comment="所属机构ID")
+    online_status = Column(Integer, default=0, comment="在线状态: 0离线, 1在线")
+    battery_level = Column(Integer, default=None, nullable=True, comment="电量百分比")
+    signal_strength = Column(Integer, default=None, nullable=True, comment="信号强度(dBm)")
+    last_heartbeat = Column(DateTime, default=None, comment="最后心跳时间")
+    extra_config = Column(Text, comment="扩展配置(JSON格式: 灵敏度/RTSP地址/电磁阀状态等)")
+    status = Column(Integer, default=1, comment="状态: 0禁用, 1启用")
+    created_at = Column(DateTime, default=datetime.now, comment="创建时间")
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
+
+
+# ================================================================
+# 家属绑定码表
+# ================================================================
+
+class BindCode(Base):
+    """家属绑定码表 — 管理端生成，家属在小程序扫码绑定"""
+    __tablename__ = "t_bind_code"
+    __table_args__ = (
+        Index("idx_bind_code", "bind_code"),
+        {"comment": "家属绑定码表"},
+    )
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True, comment="主键ID")
+    bind_code = Column(String(20), nullable=False, unique=True, comment="6位绑定码")
+    elderly_id = Column(BigInteger, nullable=False, comment="被绑定的老人ID")
+    relation = Column(String(20), default="子女", comment="预设关系")
+    generated_by = Column(BigInteger, nullable=False, comment="生成者(管理端用户ID)")
+    is_used = Column(Integer, default=0, comment="是否已使用: 0未使用, 1已使用")
+    used_by_family_id = Column(BigInteger, default=None, nullable=True, comment="使用者家属ID")
+    expire_at = Column(DateTime, nullable=False, comment="过期时间(24小时后)")
+    created_at = Column(DateTime, default=datetime.now, comment="创建时间")
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
 
     radar_device = relationship("RadarDevice", foreign_keys=[radar_device_id], primaryjoin="Elderly.radar_device_id == RadarDevice.id", lazy="select")

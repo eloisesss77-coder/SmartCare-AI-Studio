@@ -43,6 +43,10 @@ const alertTypeLabels: Record<string, string> = {
   breath_rate: '呼吸异常',
   inactivity: '久未活动',
   offline: '设备离线',
+  manual_sos: '手动求救',
+  smoke_alarm: '烟雾报警',
+  gas_leak: '煤气泄漏',
+  door_open_long: '门未关',
 };
 
 const alertTypeColors: Record<string, string> = {
@@ -51,6 +55,10 @@ const alertTypeColors: Record<string, string> = {
   breath_rate: 'gold',
   inactivity: 'blue',
   offline: 'default',
+  manual_sos: 'magenta',
+  smoke_alarm: 'volcano',
+  gas_leak: '#f5222d',
+  door_open_long: 'cyan',
 };
 
 const statusOptions = [
