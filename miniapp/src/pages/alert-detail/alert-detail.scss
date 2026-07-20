@@ -1,0 +1,55 @@
+.alert-detail-page {
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.level-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.ad-type {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.ad-info {
+  margin: 20px 0;
+}
+
+.ad-info-row {
+  display: flex;
+  flex-direction: row;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ad-label {
+  font-size: 26px;
+  color: #999;
+  width: 140px;
+}
+
+.ad-value {
+  font-size: 26px;
+  color: #333;
+  flex: 1;
+}
+
+.ad-message-box {
+  background: #fff7e6;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.ad-message {
+  font-size: 26px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.ad-actions {
+  margin-top: 32px;
+}

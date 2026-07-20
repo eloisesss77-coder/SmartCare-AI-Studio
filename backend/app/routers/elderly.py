@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import or_
+from sqlalchemy import or_, func, case
 from typing import Optional
+from datetime import datetime, timedelta, date
 
 from app.database import get_db
-from app.models import Elderly, RadarDevice, RadarData, User
+from app.models import Elderly, RadarDevice, RadarData, User, AlertRecord
 from app.schemas import (
     ElderlyCreate, ElderlyUpdate, ElderlyResponse,
     BindRadarRequest, RadarDataResponse,
@@ -180,3 +181,114 @@ def get_elderly_radar_data(
         return ApiResponse(data=None)
 
     return ApiResponse(data=RadarDataResponse.model_validate(radar_data))
+
+
+@router.get("/{elderly_id}/daily-reports", response_model=ApiResponse)
+def get_daily_reports(
+    elderly_id: int,
+    days: int = Query(7, ge=1, le=90, description="查询最近N天"),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    获取老人健康日报列表（按天聚合 RadarData）。
+    返回最近 N 天每天的健康摘要。
+    """
+    query = db.query(Elderly).filter(Elderly.id == elderly_id)
+    elderly_ids = get_user_elderly_ids(user, db)
+    if elderly_ids:
+        query = query.filter(Elderly.id.in_(elderly_ids))
+
+    elderly = query.first()
+    if not elderly:
+        raise HTTPException(status_code=404, detail="老人不存在")
+
+    start_date = datetime.now().date() - timedelta(days=days - 1)
+
+    # 按天聚合雷达数据
+    records = (
+        db.query(
+            func.date(RadarData.timestamp).label("report_date"),
+            func.avg(RadarData.heart_rate).label("hr_avg"),
+            func.min(RadarData.heart_rate).label("hr_min"),
+            func.max(RadarData.heart_rate).label("hr_max"),
+            func.avg(RadarData.breath_rate).label("br_avg"),
+            func.min(RadarData.breath_rate).label("br_min"),
+            func.max(RadarData.breath_rate).label("br_max"),
+            func.sum(case((RadarData.fall_status == 1, 1), else_=0)).label("fall_count"),
+            func.count(RadarData.id).label("data_count"),
+        )
+        .filter(
+            RadarData.elder_id == elderly_id,
+            func.date(RadarData.timestamp) >= start_date,
+        )
+        .group_by(func.date(RadarData.timestamp))
+        .order_by(func.date(RadarData.timestamp).desc())
+        .all()
+    )
+
+    # 收集所有日期范围用于批量查询告警
+    report_dates = [r.report_date for r in records]
+
+    # 批量获取每天告警数
+    alert_counts = {}
+    if report_dates:
+        alert_rows = (
+            db.query(
+                func.date(AlertRecord.created_at).label("alert_date"),
+                func.count(AlertRecord.id).label("cnt"),
+            )
+            .filter(
+                AlertRecord.elder_id == elderly_id,
+                func.date(AlertRecord.created_at) >= start_date,
+            )
+            .group_by(func.date(AlertRecord.created_at))
+            .all()
+        )
+        alert_counts = {str(row.alert_date): row.cnt for row in alert_rows}
+
+    # 构建日报列表
+    daily_list = []
+    for r in records:
+        date_str = str(r.report_date)
+        hr_avg = round(float(r.hr_avg), 0) if r.hr_avg is not None else None
+        br_avg = round(float(r.br_avg), 0) if r.br_avg is not None else None
+
+        # 异常判定
+        hr_status = "normal"
+        if hr_avg is not None:
+            if hr_avg < 40 or hr_avg > 120:
+                hr_status = "danger"
+            elif hr_avg < 60 or hr_avg > 90:
+                hr_status = "warning"
+
+        br_status = "normal"
+        if br_avg is not None:
+            if br_avg < 8 or br_avg > 30:
+                br_status = "danger"
+            elif br_avg < 12 or br_avg > 24:
+                br_status = "warning"
+
+        fall_count = int(r.fall_count)
+
+        daily_list.append({
+            "date": date_str,
+            "heartRateAvg": hr_avg,
+            "heartRateMin": int(r.hr_min) if r.hr_min is not None else None,
+            "heartRateMax": int(r.hr_max) if r.hr_max is not None else None,
+            "heartRateStatus": hr_status,
+            "breathRateAvg": br_avg,
+            "breathRateMin": int(r.br_min) if r.br_min is not None else None,
+            "breathRateMax": int(r.br_max) if r.br_max is not None else None,
+            "breathRateStatus": br_status,
+            "fallCount": fall_count,
+            "alertCount": alert_counts.get(date_str, 0),
+            "dataCount": int(r.data_count),
+        })
+
+    return ApiResponse(data={
+        "elderlyId": elderly_id,
+        "elderlyName": elderly.name,
+        "days": days,
+        "reports": daily_list,
+    })

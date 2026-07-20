@@ -20,6 +20,8 @@ import type {
   DeviceCategory,
   DeviceStatsSummary,
   BindCodeResponse,
+  AlertRule,
+  DailyReportItem,
 } from '@/types';
 
 const instance: AxiosInstance = axios.create({
@@ -119,6 +121,12 @@ export const deleteElderly = (id: number): Promise<ApiResponse<null>> =>
 export const getElderlyRadarData = (id: number): Promise<ApiResponse<RadarData>> =>
   instance.get(`/elderly/${id}/radar-data`).then((res) => res.data);
 
+export const getDailyReports = (
+  id: number,
+  days: number = 7
+): Promise<ApiResponse<{ elderlyId: number; elderlyName: string; days: number; reports: DailyReportItem[] }>> =>
+  instance.get(`/elderly/${id}/daily-reports`, { params: { days } }).then((res) => res.data);
+
 // ==================== Radar ====================
 
 export const getRadarDevices = (): Promise<ApiResponse<RadarDevice[]>> =>
@@ -173,6 +181,31 @@ export const getAlertDetail = (id: number): Promise<ApiResponse<AlertRecord>> =>
 
 export const handleAlert = (id: number, data: HandleAlertRequest): Promise<ApiResponse<null>> =>
   instance.put(`/alerts/${id}/handle`, data).then((res) => res.data);
+
+// ==================== 告警规则 ====================
+
+export const getAlertRules = (params?: {
+  page?: number;
+  pageSize?: number;
+  ruleType?: string;
+}): Promise<ApiResponse<PaginatedResponse<AlertRule>>> =>
+  instance.get('/alerts/rules', { params }).then((res) => res.data);
+
+export const createAlertRule = (data: {
+  ruleName: string;
+  ruleType: string;
+  elderId?: number | null;
+  thresholdValue: string;
+  severity?: string;
+  notifyChannels?: string;
+}): Promise<ApiResponse<AlertRule>> =>
+  instance.post('/alerts/rules', data).then((res) => res.data);
+
+export const updateAlertRule = (id: number, data: Record<string, unknown>): Promise<ApiResponse<AlertRule>> =>
+  instance.put(`/alerts/rules/${id}`, data).then((res) => res.data);
+
+export const deleteAlertRule = (id: number): Promise<ApiResponse<null>> =>
+  instance.delete(`/alerts/rules/${id}`).then((res) => res.data);
 
 // ==================== 通用设备管理（NEW） ====================
 

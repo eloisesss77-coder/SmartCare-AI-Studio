@@ -11,6 +11,8 @@ import {
   Empty,
   Tag,
   Progress,
+  Tabs,
+  Table,
 } from 'antd';
 import {
   ManOutlined,
@@ -19,13 +21,16 @@ import {
   EnvironmentOutlined,
   PhoneOutlined,
   CalendarOutlined,
+  HeartOutlined,
+  FallOutlined,
+  AlertOutlined,
 } from '@ant-design/icons';
 import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 import dayjs from 'dayjs';
-import { getElderlyDetail, getElderlyRadarData, getRadarDataHistory } from '@/services/api';
+import { getElderlyDetail, getElderlyRadarData, getRadarDataHistory, getDailyReports } from '@/services/api';
 import config from '@/config';
-import type { Elderly, RadarData } from '@/types';
+import type { Elderly, RadarData, DailyReportItem } from '@/types';
 
 const { Title, Text } = Typography;
 
@@ -40,6 +45,9 @@ const ElderlyDetail: React.FC = () => {
   const [elderly, setElderly] = useState<Elderly | null>(null);
   const [radarData, setRadarData] = useState<RadarData | null>(null);
   const [historyData, setHistoryData] = useState<RadarData[]>([]);
+  const [dailyReports, setDailyReports] = useState<DailyReportItem[]>([]);
+  const [reportDays, setReportDays] = useState(7);
+  const [reportLoading, setReportLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [timeRange, setTimeRange] = useState(1);
@@ -86,6 +94,23 @@ const ElderlyDetail: React.FC = () => {
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
+
+  const fetchDailyReports = useCallback(async () => {
+    if (!id) return;
+    setReportLoading(true);
+    try {
+      const res = await getDailyReports(Number(id), reportDays);
+      setDailyReports(res.data?.reports ?? []);
+    } catch {
+      // 错误已处理
+    } finally {
+      setReportLoading(false);
+    }
+  }, [id, reportDays]);
+
+  useEffect(() => {
+    fetchDailyReports();
+  }, [fetchDailyReports]);
 
   const bodyPostureLabels: Record<string, string> = {
     standing: '站立',
@@ -358,95 +383,204 @@ const ElderlyDetail: React.FC = () => {
           </Card>
         </Col>
 
-        {/* 右侧：雷达数据面板 */}
+        {/* 右侧：Tab切换面板 */}
         <Col xs={24} lg={16}>
-          {/* 实时数据面板 */}
-          <Card
-            title="实时监控数据"
-            style={{ borderRadius: 8, marginBottom: 16 }}
-            extra={
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                自动刷新中...
-              </Text>
-            }
-          >
-            {radarData ? (
-              <>
-                <Row gutter={[16, 16]} justify="center">
-                  <Col xs={24} sm={12} md={8}>
-                    <div style={{ textAlign: 'center' }}>
-                      <ReactECharts option={heartGaugeOption} style={{ height: 200 }} />
-                    </div>
-                  </Col>
-                  <Col xs={24} sm={12} md={8}>
-                    <div style={{ textAlign: 'center' }}>
-                      <ReactECharts option={breathGaugeOption} style={{ height: 200 }} />
-                    </div>
-                  </Col>
-                  <Col xs={24} md={8}>
-                    <Card size="small" style={{ textAlign: 'center', height: 200, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                      {/* 活动量 */}
-                      <div style={{ marginBottom: 16 }}>
-                        <Text type="secondary">活动量</Text>
-                        <Progress
-                          type="circle"
-                          percent={activityLevelMap[radarData.activityLevel] ?? 0}
-                          size={80}
-                          strokeColor={
-                            radarData.activityLevel > 80 ? '#fa8c16' : '#1890ff'
-                          }
-                        />
-                      </div>
-                      {/* 跌倒状态 */}
-                      <div style={{ marginBottom: 8 }}>
-                        <Text type="secondary">跌倒状态：</Text>
-                        {radarData.fallStatus === 1 ? (
-                          <Tag color="error" style={{ fontSize: 14, padding: '2px 12px' }}>
-                            跌倒警告!
-                          </Tag>
-                        ) : (
-                          <Tag color="success" style={{ fontSize: 14, padding: '2px 12px' }}>
-                            正常
-                          </Tag>
-                        )}
-                      </div>
-                      {/* 在床状态 */}
-                      <div>
-                        <Text type="secondary">在床状态：</Text>
-                        <Tag color={radarData.inBed === 1 ? 'green' : 'orange'}>
-                          {radarData.inBed === 1 ? '在床' : '离床'}
-                        </Tag>
-                        <Tag>{bodyPostureLabels[radarData.bodyPosture] || radarData.bodyPosture}</Tag>
-                      </div>
+          <Tabs
+            defaultActiveKey="realtime"
+            items={[
+              {
+                key: 'realtime',
+                label: '实时监控',
+                children: (
+                  <>
+                    {/* 实时数据面板 */}
+                    <Card
+                      title="实时监控数据"
+                      style={{ borderRadius: 8, marginBottom: 16 }}
+                      extra={
+                        <Text type="secondary" style={{ fontSize: 12 }}>
+                          自动刷新中...
+                        </Text>
+                      }
+                    >
+                      {radarData ? (
+                        <>
+                          <Row gutter={[16, 16]} justify="center">
+                            <Col xs={24} sm={12} md={8}>
+                              <div style={{ textAlign: 'center' }}>
+                                <ReactECharts option={heartGaugeOption} style={{ height: 200 }} />
+                              </div>
+                            </Col>
+                            <Col xs={24} sm={12} md={8}>
+                              <div style={{ textAlign: 'center' }}>
+                                <ReactECharts option={breathGaugeOption} style={{ height: 200 }} />
+                              </div>
+                            </Col>
+                            <Col xs={24} md={8}>
+                              <Card size="small" style={{ textAlign: 'center', height: 200, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                <div style={{ marginBottom: 16 }}>
+                                  <Text type="secondary">活动量</Text>
+                                  <Progress
+                                    type="circle"
+                                    percent={activityLevelMap[radarData.activityLevel] ?? 0}
+                                    size={80}
+                                    strokeColor={
+                                      (activityLevelMap[radarData.activityLevel] ?? 0) > 80 ? '#fa8c16' : '#1890ff'
+                                    }
+                                  />
+                                </div>
+                                <div style={{ marginBottom: 8 }}>
+                                  <Text type="secondary">跌倒状态：</Text>
+                                  {radarData.fallStatus === 1 ? (
+                                    <Tag color="error" style={{ fontSize: 14, padding: '2px 12px' }}>
+                                      跌倒警告!
+                                    </Tag>
+                                  ) : (
+                                    <Tag color="success" style={{ fontSize: 14, padding: '2px 12px' }}>
+                                      正常
+                                    </Tag>
+                                  )}
+                                </div>
+                                <div>
+                                  <Text type="secondary">在床状态：</Text>
+                                  <Tag color={radarData.inBed === 1 ? 'green' : 'orange'}>
+                                    {radarData.inBed === 1 ? '在床' : '离床'}
+                                  </Tag>
+                                  <Tag>{bodyPostureLabels[radarData.bodyPosture] || radarData.bodyPosture}</Tag>
+                                </div>
+                              </Card>
+                            </Col>
+                          </Row>
+                        </>
+                      ) : (
+                        <Empty description="暂无雷达数据" />
+                      )}
                     </Card>
-                  </Col>
-                </Row>
-              </>
-            ) : (
-              <Empty description="暂无雷达数据" />
-            )}
-          </Card>
 
-          {/* 历史趋势图 */}
-          <Card
-            title="历史数据趋势"
-            style={{ borderRadius: 8 }}
-            extra={
-              <Select
-                value={timeRange}
-                onChange={setTimeRange}
-                options={timeRangeOptions}
-                size="small"
-                style={{ width: 130 }}
-              />
-            }
-          >
-            {historyData.length > 0 ? (
-              <ReactECharts option={historyOption} style={{ height: 300 }} />
-            ) : (
-              <Empty description="暂无历史数据" />
-            )}
-          </Card>
+                    {/* 历史趋势图 */}
+                    <Card
+                      title="历史数据趋势"
+                      style={{ borderRadius: 8 }}
+                      extra={
+                        <Select
+                          value={timeRange}
+                          onChange={setTimeRange}
+                          options={timeRangeOptions}
+                          size="small"
+                          style={{ width: 130 }}
+                        />
+                      }
+                    >
+                      {historyData.length > 0 ? (
+                        <ReactECharts option={historyOption} style={{ height: 300 }} />
+                      ) : (
+                        <Empty description="暂无历史数据" />
+                      )}
+                    </Card>
+                  </>
+                ),
+              },
+              {
+                key: 'daily',
+                label: '健康日报',
+                children: (
+                  <Card
+                    title="健康日报"
+                    style={{ borderRadius: 8 }}
+                    extra={
+                      <Select
+                        value={reportDays}
+                        onChange={setReportDays}
+                        options={[
+                          { label: '最近7天', value: 7 },
+                          { label: '最近15天', value: 15 },
+                          { label: '最近30天', value: 30 },
+                        ]}
+                        size="small"
+                        style={{ width: 120 }}
+                      />
+                    }
+                  >
+                    <Table
+                      dataSource={dailyReports}
+                      rowKey="date"
+                      loading={reportLoading}
+                      pagination={false}
+                      size="small"
+                      locale={{ emptyText: <Empty description="暂无日报数据" /> }}
+                      columns={[
+                        {
+                          title: '日期',
+                          dataIndex: 'date',
+                          key: 'date',
+                          width: 110,
+                          render: (d: string) => <Text strong>{d}</Text>,
+                        },
+                        {
+                          title: '心率',
+                          key: 'heartRate',
+                          render: (_: unknown, r: DailyReportItem) => {
+                            if (r.heartRateAvg === null) return <Tag color="default">无数据</Tag>;
+                            const color = r.heartRateStatus === 'danger' ? 'red' : r.heartRateStatus === 'warning' ? 'orange' : 'green';
+                            return (
+                              <span>
+                                <HeartOutlined style={{ color: color === 'red' ? '#f5222d' : color === 'orange' ? '#fa8c16' : '#52c41a', marginRight: 4 }} />
+                                <Tag color={color}>
+                                  均{r.heartRateAvg}bpm ({r.heartRateMin}-{r.heartRateMax})
+                                </Tag>
+                              </span>
+                            );
+                          },
+                        },
+                        {
+                          title: '呼吸',
+                          key: 'breathRate',
+                          render: (_: unknown, r: DailyReportItem) => {
+                            if (r.breathRateAvg === null) return <Tag color="default">无数据</Tag>;
+                            const color = r.breathRateStatus === 'danger' ? 'red' : r.breathRateStatus === 'warning' ? 'orange' : 'blue';
+                            return (
+                              <Tag color={color}>
+                                均{r.breathRateAvg}次/分 ({r.breathRateMin}-{r.breathRateMax})
+                              </Tag>
+                            );
+                          },
+                        },
+                        {
+                          title: '跌倒',
+                          key: 'fall',
+                          width: 80,
+                          render: (_: unknown, r: DailyReportItem) =>
+                            r.fallCount > 0 ? (
+                              <Tag color="red" icon={<FallOutlined />}>{r.fallCount}次</Tag>
+                            ) : (
+                              <Tag color="success">0次</Tag>
+                            ),
+                        },
+                        {
+                          title: '告警',
+                          key: 'alerts',
+                          width: 80,
+                          render: (_: unknown, r: DailyReportItem) =>
+                            r.alertCount > 0 ? (
+                              <Tag color="orange" icon={<AlertOutlined />}>{r.alertCount}条</Tag>
+                            ) : (
+                              <Tag color="success">无</Tag>
+                            ),
+                        },
+                        {
+                          title: '数据量',
+                          dataIndex: 'dataCount',
+                          key: 'dataCount',
+                          width: 80,
+                          render: (c: number) => <Text type="secondary">{c}条</Text>,
+                        },
+                      ]}
+                    />
+                  </Card>
+                ),
+              },
+            ]}
+          />
         </Col>
       </Row>
     </div>

@@ -189,3 +189,42 @@ export interface ChangePasswordRequest {
   oldPassword: string;
   newPassword: string;
 }
+
+// ==================== 告警规则 ====================
+
+export interface AlertRule {
+  id: number;
+  ruleName: string;
+  ruleType: string;         // fall / heart_rate / breath_rate / out_of_bed / inactivity
+  elderId: number | null;   // null = 全局规则
+  thresholdValue: string;   // JSON: {"min":50,"max":100} / {"fall_status":1} / {"max_minutes":30}
+  severity: string;          // info / warning / critical / emergency
+  enabled: number;          // 0=禁用 1=启用
+  notifyChannels: string;   // dingtalk,wecom,sms,wechat
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ==================== 健康日报 ====================
+
+export interface DailyReportItem {
+  date: string;
+  heartRateAvg: number | null;
+  heartRateMin: number | null;
+  heartRateMax: number | null;
+  heartRateStatus: string;   // normal / warning / danger
+  breathRateAvg: number | null;
+  breathRateMin: number | null;
+  breathRateMax: number | null;
+  breathRateStatus: string;  // normal / warning / danger
+  fallCount: number;
+  alertCount: number;
+  dataCount: number;
+}
+
+export interface DailyReportsResponse {
+  elderlyId: number;
+  elderlyName: string;
+  days: number;
+  reports: DailyReportItem[];
+}

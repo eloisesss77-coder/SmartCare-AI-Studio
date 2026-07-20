@@ -215,3 +215,23 @@ def update_alert_rule(
     db.refresh(rule)
     logger.info(f"更新告警规则: {rule.rule_name}")
     return ApiResponse(message="更新成功", data=AlertRuleResponse.model_validate(rule))
+
+
+@router.delete("/rules/{rule_id}", response_model=ApiResponse)
+def delete_alert_rule(
+    rule_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """删除告警规则（仅管理员）"""
+    if user.role not in ("admin", "super_admin"):
+        raise HTTPException(status_code=403, detail="仅管理员可删除告警规则")
+
+    rule = db.query(AlertRule).filter(AlertRule.id == rule_id).first()
+    if not rule:
+        raise HTTPException(status_code=404, detail="告警规则不存在")
+
+    db.delete(rule)
+    db.commit()
+    logger.info(f"删除告警规则: {rule.rule_name}")
+    return ApiResponse(message="删除成功")

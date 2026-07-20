@@ -1,0 +1,144 @@
+.elderly-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.fall-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 34, 45, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border-radius: 16px;
+  animation: pulse 1.5s infinite;
+}
+
+.fall-icon {
+  font-size: 48px;
+  margin-bottom: 4px;
+}
+
+.fall-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f5222d;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.ec-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ec-name {
+  font-size: 34px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.ec-room {
+  font-size: 26px;
+  color: #1890ff;
+  background: #e6f7ff;
+  padding: 4px 16px;
+  border-radius: 8px;
+}
+
+.ec-body {
+  margin-bottom: 16px;
+}
+
+.ec-vital {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 20px 0;
+}
+
+.ec-vital-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ec-vital-label {
+  font-size: 22px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.ec-vital-value {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ec-posture {
+  font-size: 32px !important;
+}
+
+.ec-vital-unit {
+  font-size: 20px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.ec-divider {
+  width: 2px;
+  height: 60px;
+  background: #e8e8e8;
+}
+
+.ec-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ec-device-count {
+  font-size: 22px;
+  color: #52c41a;
+  margin-right: 12px;
+}
+
+.ec-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  background: #f5222d;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 18px;
+  padding: 0 8px;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

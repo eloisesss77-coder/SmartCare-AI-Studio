@@ -9,6 +9,7 @@ import {
   UserOutlined,
   ApiOutlined,
   LinkOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useAuth } from '@/contexts/AuthContext';
@@ -82,6 +83,11 @@ const AppLayout: React.FC = () => {
       key: '/alerts',
       icon: <AlertOutlined />,
       label: '告警中心',
+    },
+    {
+      key: '/alert-rules',
+      icon: <SettingOutlined />,
+      label: '告警规则',
     },
     {
       key: '/bind',
