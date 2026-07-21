@@ -9,12 +9,6 @@ DATABASE_URL: str = os.getenv(
     "mysql+pymysql://smartcare:CHANGE_ME@host.docker.internal:3306/smartcare"
 )
 
-# Zabbix 配置
-ZABBIX_SERVER: str = os.getenv("ZABBIX_SERVER", "127.0.0.1")
-ZABBIX_API_URL: str = os.getenv("ZABBIX_API_URL", "http://127.0.0.1/zabbix/api_jsonrpc.php")
-ZABBIX_USER: str = os.getenv("ZABBIX_USER", "Admin")
-ZABBIX_PASSWORD: str = os.getenv("ZABBIX_PASSWORD", "zabbix")
-
 # 告警通知配置
 ALERT_WEBHOOK_URL: str = os.getenv("ALERT_WEBHOOK_URL", "")
 DINGTALK_WEBHOOK_URL: str = os.getenv("DINGTALK_WEBHOOK_URL", "")

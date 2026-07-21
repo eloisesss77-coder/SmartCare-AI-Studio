@@ -21,7 +21,7 @@ router = APIRouter(prefix="/api/v1/alerts", tags=["告警管理"])
 
 @router.post("", response_model=ApiResponse)
 def create_alert(req: AlertCreate, db: Session = Depends(get_db)):
-    """接收来自 Zabbix Webhook 的告警创建（无认证，机器间通信）"""
+    """接收外部系统告警创建（无认证，机器间通信）"""
     # 告警级别映射
     level_map = {"not_classified": "info", "information": "info", "info": "info",
                  "warning": "warning", "average": "warning",
@@ -39,7 +39,7 @@ def create_alert(req: AlertCreate, db: Session = Depends(get_db)):
     db.add(alert)
     db.commit()
     db.refresh(alert)
-    logger.info(f"Zabbix Webhook 创建告警: id={alert.id}, type={req.alert_type}, level={alert_level}")
+    logger.info(f"外部系统创建告警: id={alert.id}, type={req.alert_type}, level={alert_level}")
     return ApiResponse(message="告警创建成功", data={"id": alert.id})
 
 

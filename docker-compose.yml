@@ -8,11 +8,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      DATABASE_URL: ${SMARTCARE_DB_URL:-mysql+pymysql://smartcare:CHANGE_ME_PLEASE@host.docker.internal:3306/smartcare}
-      ZABBIX_SERVER: ${ZABBIX_SERVER:-127.0.0.1}
-      ZABBIX_API_URL: ${ZABBIX_API_URL:-http://127.0.0.1/zabbix/api_jsonrpc.php}
-      ZABBIX_USER: ${ZABBIX_USER:-Admin}
-      ZABBIX_PASSWORD: ${ZABBIX_PASSWORD:-zabbix}
+      DATABASE_URL: ${SMARTCARE_DB_URL:-mysql+pymysql://smartcare:CHANGE_ME_PLEASE@172.17.0.1:3306/smartcare}
       ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
       DINGTALK_WEBHOOK_URL: ${DINGTALK_WEBHOOK_URL:-}
       WECOM_WEBHOOK_URL: ${WECOM_WEBHOOK_URL:-}

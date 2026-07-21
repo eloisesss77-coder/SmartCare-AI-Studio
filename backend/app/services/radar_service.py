@@ -13,22 +13,18 @@ from app.config import (
     ALERT_DEDUP_WINDOW,
 )
 from app.services.alert_service import create_alert, check_alert_rules
-from app.services.zabbix_service import send_to_zabbix
 
 logger = logging.getLogger(__name__)
 
 
 def process_radar_data(db: Session, radar_data: RadarData) -> None:
-    """处理雷达数据: 异常检测 -> 告警 -> 上报Zabbix"""
+    """处理雷达数据: 异常检测 -> 创建告警"""
     try:
         anomalies = detect_anomaly(radar_data)
 
         if anomalies:
             for anomaly in anomalies:
                 check_and_create_alert(db, radar_data, anomaly)
-
-        # 上报 Zabbix
-        send_to_zabbix(radar_data)
 
     except Exception as e:
         logger.error(f"处理雷达数据异常 [device={radar_data.device_id}]: {e}", exc_info=True)

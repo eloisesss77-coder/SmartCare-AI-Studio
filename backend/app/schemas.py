@@ -178,8 +178,8 @@ class HandleAlertRequest(BaseModel):
 
 
 class AlertCreate(BaseModel):
-    """从 Zabbix Webhook 创建告警"""
-    source: Optional[str] = Field("zabbix", description="告警来源")
+    """外部系统告警创建"""
+    source: Optional[str] = Field("external", description="告警来源")
     host_name: Optional[str] = Field(None, description="主机名")
     elder_id: Optional[str] = Field(None, description="老人ID")
     elder_name: Optional[str] = Field(None, description="老人姓名")
