@@ -15,7 +15,7 @@ DINGTALK_WEBHOOK_URL: str = os.getenv("DINGTALK_WEBHOOK_URL", "")
 WECOM_WEBHOOK_URL: str = os.getenv("WECOM_WEBHOOK_URL", "")
 
 # 应用配置
-APP_NAME: str = "SmartCare Monitor API"
+APP_NAME: str = "安伴 Guardian API"
 APP_VERSION: str = "1.0.0"
 APP_DEBUG: bool = os.getenv("APP_DEBUG", "false").lower() == "true"
 

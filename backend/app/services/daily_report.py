@@ -76,7 +76,7 @@ def _get_elderly_health_summary(db: Session, elderly_id: int) -> Optional[dict]:
 def _build_daily_report_text(elderly_name: str, health: dict) -> str:
     """构造日报推送文本"""
     lines = [
-        f"【SmartCare 健康日报】",
+        f"【安伴 Guardian 健康日报】",
         f"老人：{elderly_name} | 日期：{health['date']}",
         "━━━━━━━━━━━━━━━━━━",
     ]

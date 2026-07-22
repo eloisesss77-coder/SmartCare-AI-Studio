@@ -36,6 +36,11 @@ class ElderlyBase(BaseModel):
     institution_id: Optional[int] = Field(0, description="所属机构ID")
     status: Optional[int] = Field(1, description="状态: 0禁用, 1启用")
 
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
+
 
 class ElderlyCreate(ElderlyBase):
     pass
@@ -51,6 +56,11 @@ class ElderlyUpdate(BaseModel):
     emergency_phone: Optional[str] = Field(None, description="紧急联系电话")
     institution_id: Optional[int] = Field(None, description="所属机构ID")
     status: Optional[int] = Field(None, description="状态")
+
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
 
 
 class ElderlyResponse(ElderlyBase):
@@ -69,6 +79,11 @@ class ElderlyResponse(ElderlyBase):
 
 class BindRadarRequest(BaseModel):
     radar_device_id: int = Field(..., description="雷达设备ID")
+
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
 
 
 # ============================================================
@@ -141,6 +156,11 @@ class AlertRuleBase(BaseModel):
     enabled: Optional[int] = Field(1, description="是否启用")
     notify_channels: Optional[str] = Field("", description="通知渠道")
 
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
+
 
 class AlertRuleCreate(AlertRuleBase):
     pass
@@ -154,6 +174,11 @@ class AlertRuleUpdate(BaseModel):
     severity: Optional[str] = Field(None, description="严重级别")
     enabled: Optional[int] = Field(None, description="是否启用")
     notify_channels: Optional[str] = Field(None, description="通知渠道")
+
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
 
 
 class AlertRuleResponse(AlertRuleBase):
@@ -231,6 +256,11 @@ class LoginResponse(BaseModel):
 class ChangePasswordRequest(BaseModel):
     old_password: str
     new_password: str
+
+    model_config = {
+        "alias_generator": to_camel,
+        "populate_by_name": True,
+    }
 
 
 # ============================================================

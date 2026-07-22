@@ -24,10 +24,10 @@ def _elderly_to_response(elderly: Elderly) -> ElderlyResponse:
 
 @router.get("", response_model=ApiResponse)
 def list_elderly(
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
-    keyword: Optional[str] = Query(None, description="搜索关键词(姓名/房间号)"),
-    status: Optional[int] = Query(None, description="状态筛选"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
+    keyword: Optional[str] = Query(None, alias="keyword", description="搜索关键词(姓名/房间号)"),
+    status: Optional[int] = Query(None, alias="status", description="状态筛选"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

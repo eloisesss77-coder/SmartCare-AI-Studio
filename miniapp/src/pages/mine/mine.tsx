@@ -19,9 +19,9 @@ export default function Mine() {
     },
     {
       label: '关于我们',
-      desc: 'SmartCare 智慧养老 v1.0.0',
+      desc: '安伴 Guardian v1.0.0',
       onClick: () => Taro.showModal({
-        title: 'SmartCare 守护家人',
+        title: '安伴 Guardian',
         content: '智慧养老全屋监护方案\n8合1设备 · 24小时守护\n联系我们：400-xxx-xxxx',
         showCancel: false,
       }),

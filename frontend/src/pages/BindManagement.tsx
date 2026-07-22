@@ -141,7 +141,7 @@ const BindManagement: React.FC = () => {
         <div style={{ marginTop: 8, lineHeight: 2 }}>
           <Text>1. 点击「生成绑定码」→ 选择老人和关系 → 生成6位绑定码</Text><br />
           <Text>2. 将绑定码告知家属（电话/微信/打印二维码等任意方式）</Text><br />
-          <Text>3. 家属在 <Text strong>SmartCare 小程序</Text> 中登录后 → 输入绑定码 → 自动完成绑定</Text><br />
+          <Text>3. 家属在 <Text strong>安伴 Guardian 小程序</Text> 中登录后 → 输入绑定码 → 自动完成绑定</Text><br />
           <Text type="secondary">绑定码有效期24小时，过期需重新生成。</Text>
         </div>
       </div>

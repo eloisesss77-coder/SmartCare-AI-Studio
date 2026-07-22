@@ -15,10 +15,10 @@ router = APIRouter(prefix="/api/v1/users", tags=["用户管理"])
 
 @router.get("", response_model=ApiResponse)
 def list_users(
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
-    keyword: Optional[str] = Query(None, description="搜索关键词"),
-    role: Optional[str] = Query(None, description="角色筛选"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
+    keyword: Optional[str] = Query(None, alias="keyword", description="搜索关键词"),
+    role: Optional[str] = Query(None, alias="role", description="角色筛选"),
     user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):

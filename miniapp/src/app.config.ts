@@ -10,7 +10,7 @@ export default {
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#1890ff',
-    navigationBarTitleText: 'SmartCare 守护家人',
+    navigationBarTitleText: '安伴 Guardian',
     navigationBarTextStyle: 'white',
     backgroundColor: '#f5f5f5',
   },

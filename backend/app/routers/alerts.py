@@ -45,14 +45,14 @@ def create_alert(req: AlertCreate, db: Session = Depends(get_db)):
 
 @router.get("", response_model=ApiResponse)
 def list_alerts(
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
     level: Optional[str] = Query(None, alias="level", description="告警级别: info/warning/critical/emergency"),
     status: Optional[int] = Query(None, alias="status", description="处理状态"),
-    alert_level: Optional[str] = Query(None, description="告警级别(兼容)"),
-    handled_status: Optional[int] = Query(None, description="处理状态(兼容)"),
-    start: Optional[str] = Query(None, description="开始时间"),
-    end: Optional[str] = Query(None, description="结束时间"),
+    alert_level: Optional[str] = Query(None, alias="alertLevel", description="告警级别(兼容)"),
+    handled_status: Optional[int] = Query(None, alias="handledStatus", description="处理状态(兼容)"),
+    start: Optional[str] = Query(None, alias="start", description="开始时间"),
+    end: Optional[str] = Query(None, alias="end", description="结束时间"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -94,66 +94,15 @@ def list_alerts(
     )
 
 
-@router.get("/{alert_id}", response_model=ApiResponse)
-def get_alert_detail(
-    alert_id: int,
-    user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """告警详情"""
-    query = db.query(AlertRecord).filter(AlertRecord.id == alert_id)
-
-    # 权限过滤
-    elderly_ids = get_user_elderly_ids(user, db)
-    if elderly_ids:
-        query = query.filter(AlertRecord.elder_id.in_(elderly_ids))
-
-    alert = query.first()
-    if not alert:
-        raise HTTPException(status_code=404, detail="告警记录不存在")
-    return ApiResponse(data=AlertRecordResponse.model_validate(alert))
-
-
-@router.put("/{alert_id}/handle", response_model=ApiResponse)
-def handle_alert(
-    alert_id: int,
-    req: HandleAlertRequest,
-    user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """处理告警"""
-    query = db.query(AlertRecord).filter(AlertRecord.id == alert_id)
-
-    # 权限过滤
-    elderly_ids = get_user_elderly_ids(user, db)
-    if elderly_ids:
-        query = query.filter(AlertRecord.elder_id.in_(elderly_ids))
-
-    alert = query.first()
-    if not alert:
-        raise HTTPException(status_code=404, detail="告警记录不存在")
-
-    alert.handled_status = req.handled_status
-    alert.handled_by = req.handled_by
-    alert.handled_at = datetime.now()
-    alert.handle_remark = req.handle_remark or ""
-
-    db.commit()
-    db.refresh(alert)
-
-    logger.info(f"告警 {alert_id} 已由 {req.handled_by} 处理, 状态: {req.handled_status}")
-    return ApiResponse(message="处理成功", data=AlertRecordResponse.model_validate(alert))
-
-
 # ------------------------------------------------------------
-# 告警规则
+# 告警规则（必须在 /{alert_id} 之前，避免 route 冲突）
 # ------------------------------------------------------------
 
 @router.get("/rules", response_model=ApiResponse)
 def list_alert_rules(
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
-    rule_type: Optional[str] = Query(None, description="规则类型"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
+    rule_type: Optional[str] = Query(None, alias="ruleType", description="规则类型"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -235,3 +184,58 @@ def delete_alert_rule(
     db.commit()
     logger.info(f"删除告警规则: {rule.rule_name}")
     return ApiResponse(message="删除成功")
+
+
+# ------------------------------------------------------------
+# 告警详情与处理（含路径参数，放在最后避免与 /rules 冲突）
+# ------------------------------------------------------------
+
+@router.get("/{alert_id}", response_model=ApiResponse)
+def get_alert_detail(
+    alert_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """告警详情"""
+    query = db.query(AlertRecord).filter(AlertRecord.id == alert_id)
+
+    # 权限过滤
+    elderly_ids = get_user_elderly_ids(user, db)
+    if elderly_ids:
+        query = query.filter(AlertRecord.elder_id.in_(elderly_ids))
+
+    alert = query.first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="告警记录不存在")
+    return ApiResponse(data=AlertRecordResponse.model_validate(alert))
+
+
+@router.put("/{alert_id}/handle", response_model=ApiResponse)
+def handle_alert(
+    alert_id: int,
+    req: HandleAlertRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """处理告警"""
+    query = db.query(AlertRecord).filter(AlertRecord.id == alert_id)
+
+    # 权限过滤
+    elderly_ids = get_user_elderly_ids(user, db)
+    if elderly_ids:
+        query = query.filter(AlertRecord.elder_id.in_(elderly_ids))
+
+    alert = query.first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="告警记录不存在")
+
+    alert.handled_status = req.handled_status
+    alert.handled_by = req.handled_by
+    alert.handled_at = datetime.now()
+    alert.handle_remark = req.handle_remark or ""
+
+    db.commit()
+    db.refresh(alert)
+
+    logger.info(f"告警 {alert_id} 已由 {req.handled_by} 处理, 状态: {req.handled_status}")
+    return ApiResponse(message="处理成功", data=AlertRecordResponse.model_validate(alert))

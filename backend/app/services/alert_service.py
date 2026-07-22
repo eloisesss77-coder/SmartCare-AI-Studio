@@ -112,7 +112,7 @@ def notify(alert: AlertRecord, channels: str, db: Session) -> None:
             device_name = device.device_name
 
     alert_text = (
-        f"【SmartCare 告警】\n"
+        f"【安伴 Guardian 告警】\n"
         f"告警类型: {alert.alert_type}\n"
         f"告警级别: {alert.alert_level}\n"
         f"告警内容: {alert.alert_message}\n"

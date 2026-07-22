@@ -21,8 +21,8 @@ router = APIRouter(prefix="/api/v1/radar", tags=["雷达管理"])
 
 @router.get("/data", response_model=ApiResponse)
 def list_radar_data(
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -113,9 +113,9 @@ def receive_radar_data(req: RadarDataReceive, db: Session = Depends(get_db)):
 
 @router.get("/devices", response_model=ApiResponse)
 def list_devices(
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
-    online_status: Optional[int] = Query(None, description="在线状态"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
+    online_status: Optional[int] = Query(None, alias="onlineStatus", description="在线状态"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -161,11 +161,11 @@ def get_device_status(
 
 @router.get("/data/history", response_model=ApiResponse)
 def get_radar_data_history(
-    elder_id: Optional[int] = Query(None, description="老人ID"),
-    start: Optional[str] = Query(None, description="开始时间"),
-    end: Optional[str] = Query(None, description="结束时间"),
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(20, ge=1, le=200, description="每页数量"),
+    elder_id: Optional[int] = Query(None, alias="elderId", description="老人ID"),
+    start: Optional[str] = Query(None, alias="start", description="开始时间"),
+    end: Optional[str] = Query(None, alias="end", description="结束时间"),
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(20, ge=1, le=200, alias="pageSize", description="每页数量"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

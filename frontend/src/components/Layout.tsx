@@ -164,7 +164,7 @@ const AppLayout: React.FC = () => {
                 letterSpacing: 2,
               }}
             >
-              SmartCare 智慧养老
+              安伴 Guardian
             </Text>
           )}
         </div>

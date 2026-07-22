@@ -1,7 +1,7 @@
 {
-  "name": "smartcare-miniapp",
+  "name": "anban-guardian-miniapp",
   "version": "1.0.0",
-  "description": "SmartCare智慧养老家属端小程序",
+  "description": "安伴 Guardian 家属端小程序",
   "scripts": {
     "dev:weapp": "taro build --type weapp --watch",
     "build:weapp": "taro build --type weapp"

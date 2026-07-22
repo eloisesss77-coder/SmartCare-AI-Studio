@@ -64,7 +64,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=APP_NAME,
     version=APP_VERSION,
-    description="SmartCare 智慧养老监控系统后端API",
+    description="安伴 Guardian 智慧养老监控系统后端API",
     lifespan=lifespan,
 )
 

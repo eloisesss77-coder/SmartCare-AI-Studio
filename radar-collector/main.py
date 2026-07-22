@@ -272,7 +272,7 @@ def main() -> None:
 
     svc_cfg = config.get("service", {})
     mode = svc_cfg.get("mode", "simulator")
-    svc_name = svc_cfg.get("name", "SmartCare Radar Collector")
+    svc_name = svc_cfg.get("name", "安伴 Guardian Radar Collector")
 
     logger.info("=" * 60)
     logger.info("%s 启动", svc_name)

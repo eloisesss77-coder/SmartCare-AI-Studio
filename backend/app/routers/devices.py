@@ -80,11 +80,11 @@ def register_device(
 
 @router.get("", response_model=ApiResponse)
 def list_devices(
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
-    category: Optional[str] = Query(None, description="设备大类筛选"),
-    room_no: Optional[str] = Query(None, description="房间号筛选"),
-    online_status: Optional[int] = Query(None, description="在线状态: 0/1"),
+    page: int = Query(1, ge=1, alias="page"),
+    page_size: int = Query(20, ge=1, le=100, alias="pageSize"),
+    category: Optional[str] = Query(None, alias="category", description="设备大类筛选"),
+    room_no: Optional[str] = Query(None, alias="roomNo", description="房间号筛选"),
+    online_status: Optional[int] = Query(None, alias="onlineStatus", description="在线状态: 0/1"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

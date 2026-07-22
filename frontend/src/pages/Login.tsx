@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Typography, App } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { loginApi } from '@/services/api';
 
@@ -10,7 +9,6 @@ const { Title, Text } = Typography;
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const navigate = useNavigate();
   const { message: appMessage } = App.useApp();
 
   const onFinish = async (values: { username: string; password: string }) => {
@@ -19,7 +17,8 @@ const Login: React.FC = () => {
       const res = await loginApi(values);
       login(res.data.token, res.data.user);
       appMessage.success('登录成功');
-      navigate('/');
+      // 用 window.location 强制刷新避免 React 状态异步更新导致 ProtectedRoute 踢回登录页
+      window.location.href = '/';
     } catch {
       // 错误已由拦截器处理
     } finally {
@@ -49,7 +48,7 @@ const Login: React.FC = () => {
       >
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <Title level={3} style={{ marginBottom: 4, color: '#1677ff' }}>
-            SmartCare 智慧养老
+            安伴 Guardian
           </Title>
           <Text type="secondary">系统管理平台</Text>
         </div>

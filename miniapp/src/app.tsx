@@ -4,7 +4,7 @@ import './app.scss';
 
 function App({ children }: PropsWithChildren) {
   useLaunch(() => {
-    console.log('SmartCare 小程序启动');
+    console.log('安伴 Guardian 小程序启动');
 
     // 自动登录：获取 wx.login code → 后端注册/登录 → 存 familyId
     Taro.login({

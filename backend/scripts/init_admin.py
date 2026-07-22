@@ -15,7 +15,7 @@ from sqlalchemy import text
 
 def init():
     print("=" * 50)
-    print("SmartCare 初始化脚本")
+    print("安伴 Guardian 初始化脚本")
     print("=" * 50)
 
     # 确保数据库表存在

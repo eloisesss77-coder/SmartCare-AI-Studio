@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "dist/",
-  "projectname": "SmartCare-守护家人",
-  "description": "SmartCare智慧养老家属端小程序",
+  "projectname": "安伴-Guardian",
+  "description": "安伴 Guardian 家属端小程序",
   "appid": "touristappid",
   "setting": {
     "urlCheck": true,

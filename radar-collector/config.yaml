@@ -1,6 +1,6 @@
 # 雷达采集服务配置
 service:
-  name: "SmartCare Radar Collector"
+  name: "安伴 Guardian Radar Collector"
   institution_id: "INST001"
   mode: "simulator"  # simulator 或 production
 

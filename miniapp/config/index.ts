@@ -1,7 +1,7 @@
 import path from 'path';
 
 export default {
-  projectName: 'SmartCare-守护家人',
+  projectName: '安伴-Guardian',
   date: '2026-07-14',
   designWidth: 750,
   deviceRatio: {
