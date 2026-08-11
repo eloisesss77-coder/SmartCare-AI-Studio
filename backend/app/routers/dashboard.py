@@ -133,8 +133,8 @@ def get_alert_trend(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """告警趋势(最近7天) — 返回每天 total/fall/heartRate/breathRate"""
-    seven_days_ago = datetime.now() - timedelta(days=7)
+    """告警趋势(最近30天) — 返回每天 total/fall/heartRate/breathRate"""
+    thirty_days_ago = datetime.now() - timedelta(days=30)
 
     elderly_ids = get_user_elderly_ids(user, db)
 
@@ -144,7 +144,7 @@ def get_alert_trend(
             AlertRecord.alert_type,
             func.count(AlertRecord.id).label("count"),
         )
-        .filter(AlertRecord.created_at >= seven_days_ago)
+        .filter(AlertRecord.created_at >= thirty_days_ago)
     )
     if elderly_ids:
         query = query.filter(AlertRecord.elder_id.in_(elderly_ids))

@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 from pydantic.alias_generators import to_camel
 
 
@@ -231,6 +231,16 @@ class AlertRecordResponse(BaseModel):
     handle_remark: str = ""
     created_at: Optional[datetime] = None
     elder: Optional[ElderlyResponse] = None
+
+    @computed_field
+    @property
+    def elder_name(self) -> str:
+        return self.elder.name if self.elder else ""
+
+    @computed_field
+    @property
+    def room_no(self) -> str:
+        return self.elder.room_no if self.elder else ""
 
     model_config = {
         "from_attributes": True,
