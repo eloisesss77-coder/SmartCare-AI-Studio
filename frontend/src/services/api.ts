@@ -256,4 +256,7 @@ export const generateBindCode = (data: { elderlyId: number; relation: string }):
 export const getBindCodes = (): Promise<ApiResponse<BindCodeResponse[]>> =>
   instance.get('/family/bind-codes').then((res) => res.data);
 
+export const deleteBindCode = (codeId: number): Promise<ApiResponse> =>
+  instance.delete(`/family/bind-codes/${codeId}`).then((res) => res.data);
+
 export default instance;

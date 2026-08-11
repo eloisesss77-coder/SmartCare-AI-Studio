@@ -3,11 +3,11 @@
  */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Table, Tag, Button, Modal, Form, Select, Input, Space, App, Typography, Descriptions,
+  Table, Tag, Button, Modal, Form, Select, Input, Space, App, Typography, Descriptions, Popconfirm,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { PlusOutlined, ReloadOutlined, CopyOutlined, QrcodeOutlined } from '@ant-design/icons';
-import { generateBindCode, getElderlyList, getBindCodes } from '@/services/api';
+import { PlusOutlined, ReloadOutlined, CopyOutlined, QrcodeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { generateBindCode, getElderlyList, getBindCodes, deleteBindCode } from '@/services/api';
 import type { BindCodeResponse, Elderly } from '@/types';
 
 const { Text, Title } = Typography;
@@ -79,6 +79,16 @@ const BindManagement: React.FC = () => {
     );
   };
 
+  const handleDeleteCode = async (id: number) => {
+    try {
+      await deleteBindCode(id);
+      appMessage.success('删除成功');
+      setGeneratedCodes((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      // 错误已在 api 层处理
+    }
+  };
+
   const codeColumns: ColumnsType<BindCodeResponse> = [
     {
       title: '绑定码',
@@ -123,15 +133,25 @@ const BindManagement: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 80,
+      width: 140,
       render: (_: unknown, record: BindCodeResponse) => (
-        <Button
-          size="small"
-          icon={<CopyOutlined />}
-          onClick={() => copyToClipboard(record.bindCode)}
-        >
-          复制
-        </Button>
+        <Space>
+          <Button
+            size="small"
+            icon={<CopyOutlined />}
+            onClick={() => copyToClipboard(record.bindCode)}
+          >
+            复制
+          </Button>
+          <Popconfirm
+            title="确定删除该绑定码？"
+            onConfirm={() => handleDeleteCode(record.id!)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button size="small" danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
       ),
     },
   ];

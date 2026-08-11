@@ -287,6 +287,23 @@ def list_bind_codes(
     return ApiResponse(data=result)
 
 
+@router.delete("/bind-codes/{code_id}", response_model=ApiResponse)
+def delete_bind_code(
+    code_id: int,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """管理端删除绑定码"""
+    bind_code = db.query(BindCode).filter(BindCode.id == code_id).first()
+    if not bind_code:
+        raise HTTPException(status_code=404, detail="绑定码不存在")
+
+    db.delete(bind_code)
+    db.commit()
+    logger.info(f"删除绑定码: id={code_id}, code={bind_code.bind_code}, user={user.display_name}")
+    return ApiResponse(message="删除成功")
+
+
 @router.post("/use-bind-code", response_model=ApiResponse)
 def use_bind_code(
     req: UseBindCodeRequest,
