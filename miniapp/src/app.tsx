@@ -7,6 +7,11 @@ import './app.scss';
 let loginResolve: (() => void) | null = null;
 export const loginReady = new Promise<void>((resolve) => { loginResolve = resolve; });
 
+// ---------- 测试用固定 openid ----------
+// 上线前改为 false，正式版使用 wx.login 获取真实 openid
+const USE_FIXED_OPENID = true;
+const FIXED_OPENID = 'test_openid_001';
+
 /** 生成简单 UUID（小程序环境不用 crypto.randomUUID） */
 function generateUUID(): string {
   const s = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -31,10 +36,16 @@ function App({ children }: PropsWithChildren) {
 
 async function doLogin() {
   try {
-    let deviceId = Taro.getStorageSync('deviceId');
-    if (!deviceId) {
-      deviceId = generateUUID();
-      Taro.setStorageSync('deviceId', deviceId);
+    let deviceId: string;
+    if (USE_FIXED_OPENID) {
+      // 测试模式：固定 openid，清缓存/换设备也不会丢失绑定数据
+      deviceId = FIXED_OPENID;
+    } else {
+      deviceId = Taro.getStorageSync('deviceId');
+      if (!deviceId) {
+        deviceId = generateUUID();
+        Taro.setStorageSync('deviceId', deviceId);
+      }
     }
 
     const res = await Taro.request({

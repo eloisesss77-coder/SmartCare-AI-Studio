@@ -253,4 +253,7 @@ export const sendDeviceCommand = (id: number, command: Record<string, unknown>):
 export const generateBindCode = (data: { elderlyId: number; relation: string }): Promise<ApiResponse<BindCodeResponse>> =>
   instance.post('/family/generate-bind-code', data).then((res) => res.data);
 
+export const getBindCodes = (): Promise<ApiResponse<BindCodeResponse[]>> =>
+  instance.get('/family/bind-codes').then((res) => res.data);
+
 export default instance;

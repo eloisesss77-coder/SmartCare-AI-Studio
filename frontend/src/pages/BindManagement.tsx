@@ -7,7 +7,7 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { PlusOutlined, ReloadOutlined, CopyOutlined, QrcodeOutlined } from '@ant-design/icons';
-import { generateBindCode, getElderlyList } from '@/services/api';
+import { generateBindCode, getElderlyList, getBindCodes } from '@/services/api';
 import type { BindCodeResponse, Elderly } from '@/types';
 
 const { Text, Title } = Typography;
@@ -33,9 +33,17 @@ const BindManagement: React.FC = () => {
     } catch { /* ignore */ }
   }, []);
 
+  const fetchBindCodes = useCallback(async () => {
+    try {
+      const res = await getBindCodes();
+      setGeneratedCodes(res.data || []);
+    } catch { /* ignore */ }
+  }, []);
+
   useEffect(() => {
     fetchElderly();
-  }, [fetchElderly]);
+    fetchBindCodes();
+  }, [fetchElderly, fetchBindCodes]);
 
   const handleOpenGenerate = () => {
     genForm.resetFields();

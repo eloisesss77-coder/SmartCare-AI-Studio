@@ -254,6 +254,39 @@ def generate_bind_code(
     })
 
 
+@router.get("/bind-codes", response_model=ApiResponse)
+def list_bind_codes(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    管理端查询所有绑定码列表（用于刷新后恢复）
+    """
+    codes = (
+        db.query(BindCode, Elderly)
+        .join(Elderly, BindCode.elderly_id == Elderly.id)
+        .order_by(desc(BindCode.created_at))
+        .all()
+    )
+
+    result = [
+        {
+            "id": c.BindCode.id,
+            "bindCode": c.BindCode.bind_code,
+            "elderlyId": c.BindCode.elderly_id,
+            "elderlyName": c.Elderly.name,
+            "roomNo": c.Elderly.room_no,
+            "relation": c.BindCode.relation,
+            "isUsed": c.BindCode.is_used,
+            "expireAt": str(c.BindCode.expire_at) if c.BindCode.expire_at else None,
+            "createdAt": str(c.BindCode.created_at) if c.BindCode.created_at else None,
+        }
+        for c in codes
+    ]
+
+    return ApiResponse(data=result)
+
+
 @router.post("/use-bind-code", response_model=ApiResponse)
 def use_bind_code(
     req: UseBindCodeRequest,
