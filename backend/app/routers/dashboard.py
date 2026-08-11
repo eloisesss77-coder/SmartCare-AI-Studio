@@ -69,28 +69,30 @@ def get_overview(
     radar_map = {rd.elder_id: rd for rd in latest_radar}
 
     # 各房间状态
-    room_query = (
-        db.query(
-            Elderly.id,
-            Elderly.room_no,
-            Elderly.name,
-            RadarDevice.online_status,
-        )
-        .outerjoin(RadarDevice, Elderly.radar_device_id == RadarDevice.id)
+    elders = (
+        db.query(Elderly)
         .filter(Elderly.status == 1)
     )
     if elderly_ids:
-        room_query = room_query.filter(Elderly.id.in_(elderly_ids))
-    room_list = room_query.all()
+        elders = elders.filter(Elderly.id.in_(elderly_ids))
+    elders = elders.all()
+
+    # 关联雷达设备在线状态
+    device_ids = [e.radar_device_id for e in elders if e.radar_device_id]
+    device_map = {}
+    if device_ids:
+        devices = db.query(RadarDevice).filter(RadarDevice.id.in_(device_ids)).all()
+        device_map = {d.id: d for d in devices}
 
     room_status_list = []
-    for r in room_list:
-        rd = radar_map.get(r.id)
+    for elder in elders:
+        rd = radar_map.get(elder.id)
+        dev = device_map.get(elder.radar_device_id) if elder.radar_device_id else None
         room_status_list.append({
-            "roomNo": r.room_no,
-            "elderlyName": r.name,
-            "deviceOnline": r.online_status == 1 if r.online_status is not None else False,
-            "online": r.online_status == 1 if r.online_status is not None else False,
+            "roomNo": elder.room_no,
+            "elderlyName": elder.name,
+            "deviceOnline": dev.online_status == 1 if dev else False,
+            "online": dev.online_status == 1 if dev else False,
             "inBed": rd.in_bed if rd else 0,
             "heartRate": rd.heart_rate if rd else None,
             "fallStatus": rd.fall_status if rd else 0,
