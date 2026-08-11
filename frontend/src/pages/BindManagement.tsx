@@ -35,9 +35,13 @@ const BindManagement: React.FC = () => {
 
   const fetchBindCodes = useCallback(async () => {
     try {
+      console.log('[BindManagement] 正在拉取绑定码...');
       const res = await getBindCodes();
+      console.log('[BindManagement] 绑定码返回:', res);
       setGeneratedCodes(res.data || []);
-    } catch { /* ignore */ }
+    } catch (e) {
+      console.error('[BindManagement] 拉取绑定码失败:', e);
+    }
   }, []);
 
   useEffect(() => {
