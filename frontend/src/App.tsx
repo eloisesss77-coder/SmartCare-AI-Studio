@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import AppLayout from '@/components/Layout';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
@@ -10,6 +12,7 @@ import UserManagement from '@/pages/UserManagement';
 import DeviceManagement from '@/pages/DeviceManagement';
 import BindManagement from '@/pages/BindManagement';
 import AlertRules from '@/pages/AlertRules';
+import NotFound from '@/pages/NotFound';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -23,22 +26,26 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+const SafeRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <ErrorBoundary>{children}</ErrorBoundary>
+);
+
 const AppRoutes: React.FC = () => {
   const { isAuthenticated } = useAuth();
   return (
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/elderly" element={<ElderlyList />} />
-        <Route path="/elderly/:id" element={<ElderlyDetail />} />
-        <Route path="/devices" element={<DeviceManagement />} />
-        <Route path="/alerts" element={<AlertCenter />} />
-        <Route path="/alert-rules" element={<AlertRules />} />
-        <Route path="/bind" element={<BindManagement />} />
-        <Route path="/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
+        <Route path="/" element={<SafeRoute><Dashboard /></SafeRoute>} />
+        <Route path="/elderly" element={<SafeRoute><ElderlyList /></SafeRoute>} />
+        <Route path="/elderly/:id" element={<SafeRoute><ElderlyDetail /></SafeRoute>} />
+        <Route path="/devices" element={<SafeRoute><DeviceManagement /></SafeRoute>} />
+        <Route path="/alerts" element={<SafeRoute><AlertCenter /></SafeRoute>} />
+        <Route path="/alert-rules" element={<SafeRoute><AlertRules /></SafeRoute>} />
+        <Route path="/bind" element={<SafeRoute><BindManagement /></SafeRoute>} />
+        <Route path="/users" element={<AdminRoute><SafeRoute><UserManagement /></SafeRoute></AdminRoute>} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

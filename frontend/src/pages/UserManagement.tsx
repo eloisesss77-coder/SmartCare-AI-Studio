@@ -42,6 +42,7 @@ const UserManagement: React.FC = () => {
   const [pageSize, setPageSize] = useState(10);
   const [keyword, setKeyword] = useState('');
   const [roleFilter, setRoleFilter] = useState<string | undefined>(undefined);
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -63,11 +64,11 @@ const UserManagement: React.FC = () => {
 
   useEffect(() => {
     fetchList();
-  }, [fetchList]);
+  }, [fetchList, searchTrigger]);
 
   const handleSearch = () => {
     setPage(1);
-    fetchList();
+    setSearchTrigger(t => t + 1);
   };
 
   const handleAdd = () => {

@@ -38,6 +38,7 @@ const ElderlyList: React.FC = () => {
   const [pageSize, setPageSize] = useState(10);
   const [keyword, setKeyword] = useState('');
   const [statusFilter, setStatusFilter] = useState<number | undefined>(undefined);
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
   // 弹窗相关
   const [modalOpen, setModalOpen] = useState(false);
@@ -60,11 +61,11 @@ const ElderlyList: React.FC = () => {
 
   useEffect(() => {
     fetchList();
-  }, [fetchList]);
+  }, [fetchList, searchTrigger]);
 
   const handleSearch = () => {
     setPage(1);
-    fetchList();
+    setSearchTrigger(t => t + 1);
   };
 
   const handleAdd = () => {

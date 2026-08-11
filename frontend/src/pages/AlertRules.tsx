@@ -181,12 +181,12 @@ const AlertRules: React.FC = () => {
     },
     {
       title: '启用', dataIndex: 'enabled', width: 70,
-      render: (v: number) => (
+      render: (v: number, record: AlertRule) => (
         <Switch
           checked={v === 1}
           size="small"
           onChange={async (checked) => {
-            const rule = rules.find((r) => r.enabled === v);
+            const rule = record;
             if (!rule) return;
             try {
               await updateAlertRule(rule.id, { enabled: checked ? 1 : 0 });
