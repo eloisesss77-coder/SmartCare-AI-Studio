@@ -1,4 +1,6 @@
-import { PropsWithChildren } from 'react';
+import { useState } from 'react';
+import { View, Text } from '@tarojs/components';
+import type { PropsWithChildren } from 'react';
 import Taro, { useLaunch } from '@tarojs/taro';
 import './app.scss';
 
@@ -9,12 +11,23 @@ function generateUUID(): string {
 }
 
 function App({ children }: PropsWithChildren) {
+  const [ready, setReady] = useState(false);
+
   useLaunch(() => {
     console.log('安伴 Guardian 小程序启动');
-    void doLogin();
+    doLogin().finally(() => setReady(true));
   });
 
-  return children;
+  // 登录完成后再渲染子页面，避免首页在 familyId 写入前就发请求
+  if (!ready) {
+    return (
+      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <Text style={{ color: '#999', fontSize: '28px' }}>加载中...</Text>
+      </View>
+    );
+  }
+
+  return children as JSX.Element;
 }
 
 async function doLogin() {
