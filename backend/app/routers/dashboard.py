@@ -90,7 +90,7 @@ def get_overview(
         dev = device_map.get(elder.radar_device_id) if elder.radar_device_id else None
         room_status_list.append({
             "roomNo": elder.room_no,
-            "elderlyName": elder.name,
+            "elderName": elder.name,
             "deviceOnline": dev.online_status == 1 if dev else False,
             "online": dev.online_status == 1 if dev else False,
             "inBed": rd.in_bed if rd else 0,
