@@ -123,17 +123,17 @@ export async function getMyElderly(): Promise<ApiResponse<MyElderlyItem[]>> {
 
 /** 老人详情 */
 export async function getElderlyDetail(id: number): Promise<ApiResponse<ElderlyInfo>> {
-  return request<ElderlyInfo>(`/family/elderly/${id}`);
+  return request<ElderlyInfo>(`/elderly/${id}`);
 }
 
 /** 老人最新雷达数据 */
 export async function getElderlyRadarData(id: number): Promise<ApiResponse<RadarData>> {
-  return request<RadarData>(`/family/elderly/${id}/radar-data`);
+  return request<RadarData>(`/elderly/${id}/radar-data`);
 }
 
 /** 老人健康日报 */
 export async function getDailyReports(id: number, days: number = 7): Promise<ApiResponse<{ reports: DailyReportItem[] }>> {
-  return request<{ reports: DailyReportItem[] }>(`/family/elderly/${id}/daily-reports?days=${days}`);
+  return request<{ reports: DailyReportItem[] }>(`/elderly/${id}/daily-reports?days=${days}`);
 }
 
 /** 雷达历史数据（暂不用） */
