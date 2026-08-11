@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro, { usePullDownRefresh, useDidShow } from '@tarojs/taro';
 import { getMyElderly } from '../../services/api';
@@ -13,12 +13,14 @@ export default function Index() {
   const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ type: string; message: string; elderlyId: number }>({ type: '', message: '', elderlyId: 0 });
+  const listRef = useRef<MyElderlyItem[]>([]);
 
   const fetchData = useCallback(async () => {
     try {
       const res = await getMyElderly();
       const data = res.data || [];
       setList(data);
+      listRef.current = data;
       setError(false);
 
       // 检查是否有跌倒告警
@@ -33,7 +35,7 @@ export default function Index() {
       }
     } catch {
       // 已绑定过数据时保留旧列表，不清空
-      if (list.length === 0) {
+      if (listRef.current.length === 0) {
         setError(true);
       }
       Taro.showToast({ title: '加载失败', icon: 'none' });

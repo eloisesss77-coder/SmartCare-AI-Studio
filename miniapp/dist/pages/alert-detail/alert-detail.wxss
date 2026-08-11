@@ -1,1 +1,58 @@
-.alert-detail-page{min-height:100vh;padding:20rpx}.level-icon{border-radius:50%;height:16rpx;margin-right:12rpx;width:16rpx}.ad-type{font-size:32rpx;font-weight:700}.ad-info{margin:20rpx 0}.ad-info-row{border-bottom:1rpx solid #f0f0f0;display:flex;flex-direction:row;padding:16rpx 0}.ad-label{color:#999;font-size:26rpx;width:140rpx}.ad-value{color:#333;flex:1;font-size:26rpx}.ad-message-box{background:#fff7e6;border-radius:12rpx;padding:24rpx}.ad-message{color:#333;font-size:26rpx;line-height:1.6}.ad-actions{margin-top:32rpx}
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[4]!./src/pages/alert-detail/alert-detail.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.alert-detail-page {
+  padding: 20rpx;
+  min-height: 100vh;
+}
+
+.level-icon {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.ad-type {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.ad-info {
+  margin: 20rpx 0;
+}
+
+.ad-info-row {
+  display: flex;
+  flex-direction: row;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.ad-label {
+  font-size: 26rpx;
+  color: #999;
+  width: 140rpx;
+}
+
+.ad-value {
+  font-size: 26rpx;
+  color: #333;
+  flex: 1;
+}
+
+.ad-message-box {
+  background: #fff7e6;
+  border-radius: 12rpx;
+  padding: 24rpx;
+}
+
+.ad-message {
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.ad-actions {
+  margin-top: 32rpx;
+}

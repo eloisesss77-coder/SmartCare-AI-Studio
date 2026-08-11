@@ -1,1 +1,295 @@
-.elderly-card{background:#fff;border-radius:16rpx;box-shadow:0 2rpx 12rpx rgba(0,0,0,.06);margin-bottom:20rpx;overflow:hidden;padding:24rpx;position:relative}.fall-overlay{align-items:center;animation:pulse 1.5s infinite;background:rgba(245,34,45,.12);border-radius:16rpx;bottom:0;display:flex;flex-direction:column;justify-content:center;left:0;position:absolute;right:0;top:0;z-index:2}.fall-icon{font-size:48rpx;margin-bottom:4rpx}.fall-text{color:#f5222d;font-size:28rpx;font-weight:700}.ec-header{align-items:center;display:flex;flex-direction:row;justify-content:space-between;margin-bottom:20rpx}.ec-name{font-size:34rpx;font-weight:700;margin-left:8rpx}.ec-room{background:#e6f7ff;border-radius:8rpx;color:#1890ff;font-size:26rpx;padding:4rpx 16rpx}.ec-body{margin-bottom:16rpx}.ec-vital{align-items:center;background:#fafafa;border-radius:12rpx;display:flex;flex-direction:row;padding:20rpx 0}.ec-vital-item{align-items:center;display:flex;flex:1;flex-direction:column}.ec-vital-label{color:#999;font-size:22rpx;margin-bottom:8rpx}.ec-vital-value{font-size:44rpx;font-weight:700;line-height:1}.ec-posture{font-size:32rpx!important}.ec-vital-unit{color:#999;font-size:20rpx;margin-top:4rpx}.ec-divider{background:#e8e8e8;height:60rpx;width:2rpx}.ec-footer{align-items:center;display:flex;flex-direction:row;justify-content:space-between}.ec-device-count{color:#52c41a;font-size:22rpx;margin-right:12rpx}.ec-badge{align-items:center;animation:blink 1.5s infinite;background:#f5222d;border-radius:18rpx;color:#fff;display:inline-flex;font-size:22rpx;font-weight:700;height:36rpx;justify-content:center;min-width:36rpx;padding:0 8rpx}@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}.ab-overlay{align-items:center;animation:fadeIn .3s;background:rgba(0,0,0,.6);bottom:0;display:flex;justify-content:center;left:0;position:fixed;right:0;top:0;z-index:9999}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.ab-modal{animation:scaleIn .3s;background:#fff;border-radius:24rpx;box-shadow:0 8rpx 40rpx rgba(0,0,0,.3);padding:48rpx 40rpx;text-align:center;width:560rpx}@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}.ab-icon{animation:pulse 1s infinite;display:block;font-size:72rpx;margin-bottom:16rpx}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}.ab-title{color:#f5222d;display:block;font-size:40rpx;font-weight:700;margin-bottom:12rpx}.ab-message{color:#666;display:block;font-size:26rpx;margin-bottom:32rpx}.ab-actions{display:flex;flex-direction:row;gap:20rpx}.ab-btn{border-radius:12rpx;flex:1;font-size:28rpx;font-weight:600;padding:20rpx 0;text-align:center}.ab-btn-call{background:#f5222d;color:#fff}.ab-btn-view{background:#fff;border:2rpx solid #f5222d;color:#f5222d}.container{padding:20rpx}.elderly-list{height:calc(100vh - 120rpx)}.empty-page{align-items:center;display:flex;flex-direction:column;justify-content:center;padding-top:200rpx}.empty-icon{font-size:80rpx;margin-bottom:24rpx}.empty-title{color:#333;font-size:32rpx;font-weight:600;margin-bottom:12rpx}.empty-desc{color:#999;font-size:26rpx;margin-bottom:40rpx}.add-hint{padding:32rpx 0;text-align:center}
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[4]!./src/components/elderly-card/elderly-card.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.elderly-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.fall-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 34, 45, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border-radius: 16rpx;
+  animation: pulse 1.5s infinite;
+}
+
+.fall-icon {
+  font-size: 48rpx;
+  margin-bottom: 4rpx;
+}
+
+.fall-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #f5222d;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.ec-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.ec-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-left: 8rpx;
+}
+
+.ec-room {
+  font-size: 26rpx;
+  color: #1890ff;
+  background: #e6f7ff;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.ec-body {
+  margin-bottom: 16rpx;
+}
+
+.ec-vital {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 12rpx;
+  padding: 20rpx 0;
+}
+
+.ec-vital-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ec-vital-label {
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.ec-vital-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ec-posture {
+  font-size: 32rpx !important;
+}
+
+.ec-vital-unit {
+  font-size: 20rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.ec-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background: #e8e8e8;
+}
+
+.ec-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ec-device-count {
+  font-size: 22rpx;
+  color: #52c41a;
+  margin-right: 12rpx;
+}
+
+.ec-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36rpx;
+  height: 36rpx;
+  background: #f5222d;
+  color: #fff;
+  font-size: 22rpx;
+  font-weight: 700;
+  border-radius: 18rpx;
+  padding: 0 8rpx;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[4]!./src/components/alert-banner/alert-banner.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.ab-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.ab-modal {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  width: 560rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.3s;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.ab-icon {
+  font-size: 72rpx;
+  display: block;
+  margin-bottom: 16rpx;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+.ab-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #f5222d;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.ab-message {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 32rpx;
+}
+
+.ab-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 20rpx;
+}
+
+.ab-btn {
+  flex: 1;
+  padding: 20rpx 0;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ab-btn-call {
+  background: #f5222d;
+  color: #fff;
+}
+
+.ab-btn-view {
+  background: #fff;
+  color: #f5222d;
+  border: 2rpx solid #f5222d;
+}
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[4]!./src/pages/index/index.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.container {
+  padding: 20rpx;
+}
+
+.elderly-list {
+  height: calc(100vh - 120rpx);
+}
+
+.empty-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+
+.add-hint {
+  text-align: center;
+  padding: 32rpx 0;
+}

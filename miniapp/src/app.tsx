@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { View, Text } from '@tarojs/components';
 import type { PropsWithChildren } from 'react';
 import Taro, { useLaunch } from '@tarojs/taro';
+import { setLoginReady } from './services/api';
 import './app.scss';
+
+/** 全局登录 Promise — api.ts 可等待它完成后再发需要 familyId 的请求 */
+let loginResolve: (() => void) | null = null;
+export const loginReady = new Promise<void>((resolve) => { loginResolve = resolve; });
 
 /** 生成简单 UUID（小程序环境不用 crypto.randomUUID） */
 function generateUUID(): string {
@@ -11,23 +14,19 @@ function generateUUID(): string {
 }
 
 function App({ children }: PropsWithChildren) {
-  const [ready, setReady] = useState(false);
-
-  useLaunch(() => {
+  useLaunch(async () => {
     console.log('安伴 Guardian 小程序启动');
-    doLogin().finally(() => setReady(true));
+    await doLogin();
+    // 登录完成后通知 api.ts 可以安全发请求了
+    if (loginResolve) {
+      setLoginReady();
+      loginResolve();
+      loginResolve = null;
+    }
   });
 
-  // 登录完成后再渲染子页面，避免首页在 familyId 写入前就发请求
-  if (!ready) {
-    return (
-      <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <Text style={{ color: '#999', fontSize: '28px' }}>加载中...</Text>
-      </View>
-    );
-  }
-
-  return children as JSX.Element;
+  // 不阻塞页面渲染，登录在后台进行
+  return <>{children}</>;
 }
 
 async function doLogin() {

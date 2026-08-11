@@ -1,1 +1,465 @@
-"use strict";(wx["webpackJsonp"]=wx["webpackJsonp"]||[]).push([[310],{7140:function(a,e,s){var l=s(2180),t=s(2688),c=s(5861),r=s(9439),n=s(7294),i=s(1515),d=s(2954),x=s.n(d),m=s(7688),v=s(151),u=s(5893),h={stationary:5,resting:15,low:30,moderate:55,active:75,high:90,walking:85};function g(a){var e,s=a.data,l=a.loading;if(!s)return(0,u.jsx)(i.G7,{className:"vp-empty",children:(0,u.jsx)(i.xv,{className:"text-muted",children:l?"\u52a0\u8f7d\u4e2d...":"\u6682\u65e0\u96f7\u8fbe\u6570\u636e"})});var t=s.heartRate,c=s.breathRate,r=null!==(e=h[s.activityLevel])&&void 0!==e?e:0,n=t<40||t>120?"#f5222d":t<60||t>90?"#fa8c16":"#52c41a",d=c<8||c>30?"#f5222d":c<12||c>24?"#fa8c16":"#52c41a";return(0,u.jsxs)(i.G7,{className:"vp-panel",children:[(0,u.jsxs)(i.G7,{className:"vp-gauges",children:[(0,u.jsxs)(i.G7,{className:"vp-gauge",children:[(0,u.jsxs)(i.G7,{className:"vp-gauge-circle",style:{borderColor:n},children:[(0,u.jsx)(i.xv,{className:"vp-gauge-value",style:{color:n},children:t}),(0,u.jsx)(i.xv,{className:"vp-gauge-unit",children:"BPM"})]}),(0,u.jsx)(i.xv,{className:"vp-gauge-label",children:"\u5fc3\u7387"})]}),(0,u.jsxs)(i.G7,{className:"vp-gauge",children:[(0,u.jsxs)(i.G7,{className:"vp-gauge-circle",style:{borderColor:d},children:[(0,u.jsx)(i.xv,{className:"vp-gauge-value",style:{color:d},children:c}),(0,u.jsx)(i.xv,{className:"vp-gauge-unit",children:"\u6b21/\u5206"})]}),(0,u.jsx)(i.xv,{className:"vp-gauge-label",children:"\u547c\u5438"})]})]}),(0,u.jsxs)(i.G7,{className:"vp-tags",children:[(0,u.jsxs)(i.G7,{className:"vp-tag-item",children:[(0,u.jsx)(i.xv,{className:"vp-tag-label",children:"\u6d3b\u52a8\u91cf"}),(0,u.jsx)(i.G7,{className:"vp-progress-bar",children:(0,u.jsx)(i.G7,{className:"vp-progress-fill",style:{width:"".concat(r,"%"),backgroundColor:r>80?"#fa8c16":"#1890ff"}})})]}),(0,u.jsxs)(i.G7,{className:"vp-tag-row",children:[(0,u.jsx)(i.xv,{className:"vp-tag-label",children:"\u8dcc\u5012"}),(0,u.jsx)(i.xv,{className:1===s.fallStatus?"tag tag-red":"tag tag-green",children:1===s.fallStatus?"\u26a0 \u8dcc\u5012!":"\u2713 \u5b89\u5168"})]}),(0,u.jsxs)(i.G7,{className:"vp-tag-row",children:[(0,u.jsx)(i.xv,{className:"vp-tag-label",children:"\u5728\u5e8a"}),(0,u.jsx)(i.xv,{className:1===s.inBed?"tag tag-blue":"tag tag-orange",children:1===s.inBed?"\u5728\u5e8a":"\u79bb\u5e8a"}),(0,u.jsx)(i.xv,{className:"tag tag-default ml-8",children:(0,v.EN)(s.bodyPosture)})]})]})]})}function o(){var a=(0,d.useRouter)(),e=Number(a.params.id),s=(0,n.useState)(null),l=(0,r.Z)(s,2),h=l[0],o=l[1],j=(0,n.useState)(null),N=(0,r.Z)(j,2),p=N[0],f=N[1],b=(0,n.useState)([]),y=(0,r.Z)(b,2),G=y[0],w=y[1],C=(0,n.useState)("realtime"),R=(0,r.Z)(C,2),k=R[0],Z=R[1],S=(0,n.useState)(!0),A=(0,r.Z)(S,2),P=A[0],M=A[1],B=(0,n.useCallback)((0,c.Z)((0,t.Z)().m(function a(){var s,l,c,n;return(0,t.Z)().w(function(a){while(1)switch(a.p=a.n){case 0:if(e){a.n=1;break}return a.a(2);case 1:return a.p=1,a.n=2,Promise.all([(0,m.AA)(e),(0,m.Xr)(e)]);case 2:s=a.v,l=(0,r.Z)(s,2),c=l[0],n=l[1],o(c.data),f(n.data),a.n=4;break;case 3:a.p=3,a.v,x().showToast({title:"\u52a0\u8f7d\u5931\u8d25",icon:"none"});case 4:return a.p=4,M(!1),a.f(4);case 5:return a.a(2)}},a,null,[[1,3,4,5]])})),[e]),T=(0,n.useCallback)((0,c.Z)((0,t.Z)().m(function a(){var s,l;return(0,t.Z)().w(function(a){while(1)switch(a.p=a.n){case 0:if(e){a.n=1;break}return a.a(2);case 1:return a.p=1,a.n=2,(0,m.il)(e,7);case 2:l=a.v,w((null===(s=l.data)||void 0===s?void 0:s.reports)||[]),a.n=4;break;case 3:a.p=3,a.v;case 4:return a.a(2)}},a,null,[[1,3]])})),[e]);return(0,n.useEffect)(function(){B(),T();var a=setInterval(B,1e4);return function(){return clearInterval(a)}},[B]),P||!h?(0,u.jsx)(i.G7,{className:"container",style:{textAlign:"center",paddingTop:"200px"},children:(0,u.jsx)(i.xv,{className:"text-muted",children:"\u52a0\u8f7d\u4e2d..."})}):(0,u.jsxs)(i.pf,{scrollY:!0,className:"detail-page",children:[(0,u.jsxs)(i.G7,{className:"card",children:[(0,u.jsxs)(i.G7,{className:"flex-between mb-16",children:[(0,u.jsxs)(i.G7,{className:"flex-row",children:[(0,u.jsx)(i.xv,{className:"detail-name",children:h.name}),(0,u.jsxs)(i.xv,{className:"tag tag-default ml-8",children:[(0,v.oG)(h.gender)," \xb7 ",h.age,"\u5c81"]})]}),(0,u.jsxs)(i.xv,{className:"tag tag-blue",children:[h.roomNo,"\u5ba4"]})]}),h.medicalHistory&&(0,u.jsxs)(i.G7,{className:"detail-row",children:[(0,u.jsx)(i.xv,{className:"detail-label",children:"\u75c5\u53f2"}),(0,u.jsx)(i.xv,{className:"detail-value",children:h.medicalHistory})]}),h.emergencyContact&&(0,u.jsxs)(i.G7,{className:"detail-row",children:[(0,u.jsx)(i.xv,{className:"detail-label",children:"\u7d27\u6025\u8054\u7cfb\u4eba"}),(0,u.jsxs)(i.xv,{className:"detail-value",children:[h.emergencyContact," ",h.emergencyPhone]})]})]}),(0,u.jsxs)(i.G7,{className:"tab-bar",children:[(0,u.jsx)(i.G7,{className:"tab-item ".concat("realtime"===k?"tab-active":""),onClick:function(){return Z("realtime")},children:(0,u.jsx)(i.xv,{children:"\u5b9e\u65f6\u76d1\u63a7"})}),(0,u.jsx)(i.G7,{className:"tab-item ".concat("daily"===k?"tab-active":""),onClick:function(){return Z("daily")},children:(0,u.jsx)(i.xv,{children:"\u5065\u5eb7\u65e5\u62a5"})})]}),"realtime"===k&&(0,u.jsx)(i.G7,{className:"card",children:(0,u.jsx)(g,{data:p,loading:!1})}),"daily"===k&&(0,u.jsx)(i.G7,{children:0===G.length?(0,u.jsx)(i.G7,{className:"card",style:{textAlign:"center",padding:"60px 0"},children:(0,u.jsx)(i.xv,{className:"text-muted",children:"\u6682\u65e0\u65e5\u62a5\u6570\u636e"})}):G.map(function(a){var e="danger"===a.heartRateStatus?"#f5222d":"warning"===a.heartRateStatus?"#fa8c16":"#52c41a",s="danger"===a.breathRateStatus?"#f5222d":"warning"===a.breathRateStatus?"#fa8c16":"#52c41a";return(0,u.jsxs)(i.G7,{className:"card daily-card",children:[(0,u.jsxs)(i.G7,{className:"flex-between mb-16",children:[(0,u.jsx)(i.xv,{className:"daily-date",children:(0,v.p6)(a.date)}),(0,u.jsxs)(i.xv,{className:"text-muted",children:[a.dataCount,"\u6761\u6570\u636e"]})]}),(0,u.jsxs)(i.G7,{className:"daily-vitals",children:[(0,u.jsxs)(i.G7,{className:"daily-vital-item",children:[(0,u.jsx)(i.xv,{className:"daily-vital-label",children:"\u5fc3\u7387"}),null!==a.heartRateAvg?(0,u.jsxs)(i.xv,{className:"daily-vital-value",style:{color:e},children:["\u5747",a.heartRateAvg," (",a.heartRateMin,"-",a.heartRateMax,")"]}):(0,u.jsx)(i.xv,{className:"text-muted",children:"\u65e0\u6570\u636e"}),(0,u.jsx)(i.xv,{className:"daily-vital-unit",children:"BPM"})]}),(0,u.jsxs)(i.G7,{className:"daily-vital-item",children:[(0,u.jsx)(i.xv,{className:"daily-vital-label",children:"\u547c\u5438"}),null!==a.breathRateAvg?(0,u.jsxs)(i.xv,{className:"daily-vital-value",style:{color:s},children:["\u5747",a.breathRateAvg," (",a.breathRateMin,"-",a.breathRateMax,")"]}):(0,u.jsx)(i.xv,{className:"text-muted",children:"\u65e0\u6570\u636e"}),(0,u.jsx)(i.xv,{className:"daily-vital-unit",children:"\u6b21/\u5206"})]})]}),(0,u.jsxs)(i.G7,{className:"daily-footer",children:[a.fallCount>0?(0,u.jsxs)(i.xv,{className:"tag tag-red mr-8",children:["\u8dcc\u5012",a.fallCount,"\u6b21"]}):(0,u.jsx)(i.xv,{className:"tag tag-green mr-8",children:"\u65e0\u8dcc\u5012"}),a.alertCount>0?(0,u.jsxs)(i.xv,{className:"tag tag-orange",children:[a.alertCount,"\u6761\u544a\u8b66"]}):(0,u.jsx)(i.xv,{className:"tag tag-green",children:"\u65e0\u544a\u8b66"})]})]},a.date)})}),(0,u.jsx)(i.G7,{style:{height:"40px"}})]})}var j={navigationBarTitleText:"\u8001\u4eba\u8be6\u60c5"};Page((0,l.createPageConfig)(o,"pages/elderly-detail/elderly-detail",{root:{cn:[]}},j||{}))}},function(a){var e=function(e){return a(a.s=e)};a.O(0,[107,216,592],function(){return e(7140)});a.O()}]);
+"use strict";
+(wx["webpackJsonp"] = wx["webpackJsonp"] || []).push([["pages/elderly-detail/elderly-detail"],{
+
+/***/ "./node_modules/@tarojs/taro-loader/lib/entry-cache.js?name=pages/elderly-detail/elderly-detail!./src/pages/elderly-detail/elderly-detail.tsx":
+/*!****************************************************************************************************************************************************!*\
+  !*** ./node_modules/@tarojs/taro-loader/lib/entry-cache.js?name=pages/elderly-detail/elderly-detail!./src/pages/elderly-detail/elderly-detail.tsx ***!
+  \****************************************************************************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ ElderlyDetail; }
+/* harmony export */ });
+/* harmony import */ var D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_regenerator_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/regenerator.js */ "./node_modules/@babel/runtime/helpers/esm/regenerator.js");
+/* harmony import */ var D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ "./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js");
+/* harmony import */ var D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/esm/slicedToArray.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/cjs/react.production.min.js");
+/* harmony import */ var _tarojs_components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @tarojs/components */ "./node_modules/@tarojs/plugin-platform-weapp/dist/components-react.js");
+/* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @tarojs/taro */ "./node_modules/@tarojs/taro/index.js");
+/* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_tarojs_taro__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _services_api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/api */ "./src/services/api.ts");
+/* harmony import */ var _components_vital_panel_vital_panel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/vital-panel/vital-panel */ "./src/components/vital-panel/vital-panel.tsx");
+/* harmony import */ var _utils_format__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../utils/format */ "./src/utils/format.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/cjs/react-jsx-runtime.production.min.js");
+
+
+
+
+
+
+
+
+
+
+
+function ElderlyDetail() {
+  var router = (0,_tarojs_taro__WEBPACK_IMPORTED_MODULE_1__.useRouter)();
+  var id = Number(router.params.id);
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+    _useState2 = (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_useState, 2),
+    elderly = _useState2[0],
+    setElderly = _useState2[1];
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+    _useState4 = (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_useState3, 2),
+    radarData = _useState4[0],
+    setRadarData = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+    _useState6 = (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_useState5, 2),
+    dailyReports = _useState6[0],
+    setDailyReports = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('realtime'),
+    _useState8 = (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_useState7, 2),
+    activeTab = _useState8[0],
+    setActiveTab = _useState8[1];
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true),
+    _useState0 = (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_useState9, 2),
+    loading = _useState0[0],
+    setLoading = _useState0[1];
+  var fetchData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(/*#__PURE__*/(0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_6__["default"])(/*#__PURE__*/(0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_regenerator_js__WEBPACK_IMPORTED_MODULE_7__["default"])().m(function _callee() {
+    var _yield$Promise$all, _yield$Promise$all2, elderlyRes, radarRes, _t;
+    return (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_regenerator_js__WEBPACK_IMPORTED_MODULE_7__["default"])().w(function (_context) {
+      while (1) switch (_context.p = _context.n) {
+        case 0:
+          if (id) {
+            _context.n = 1;
+            break;
+          }
+          return _context.a(2);
+        case 1:
+          _context.p = 1;
+          _context.n = 2;
+          return Promise.all([(0,_services_api__WEBPACK_IMPORTED_MODULE_2__.getElderlyDetail)(id), (0,_services_api__WEBPACK_IMPORTED_MODULE_2__.getElderlyRadarData)(id)]);
+        case 2:
+          _yield$Promise$all = _context.v;
+          _yield$Promise$all2 = (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_5__["default"])(_yield$Promise$all, 2);
+          elderlyRes = _yield$Promise$all2[0];
+          radarRes = _yield$Promise$all2[1];
+          setElderly(elderlyRes.data);
+          setRadarData(radarRes.data);
+          _context.n = 4;
+          break;
+        case 3:
+          _context.p = 3;
+          _t = _context.v;
+          _tarojs_taro__WEBPACK_IMPORTED_MODULE_1___default().showToast({
+            title: '加载失败',
+            icon: 'none'
+          });
+        case 4:
+          _context.p = 4;
+          setLoading(false);
+          return _context.f(4);
+        case 5:
+          return _context.a(2);
+      }
+    }, _callee, null, [[1, 3, 4, 5]]);
+  })), [id]);
+  var fetchDaily = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(/*#__PURE__*/(0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_6__["default"])(/*#__PURE__*/(0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_regenerator_js__WEBPACK_IMPORTED_MODULE_7__["default"])().m(function _callee2() {
+    var _res$data, res, _t2;
+    return (0,D_SmartCare_AI_Studio_03_Projects_smartcare_monitor_miniapp_node_modules_babel_runtime_helpers_esm_regenerator_js__WEBPACK_IMPORTED_MODULE_7__["default"])().w(function (_context2) {
+      while (1) switch (_context2.p = _context2.n) {
+        case 0:
+          if (id) {
+            _context2.n = 1;
+            break;
+          }
+          return _context2.a(2);
+        case 1:
+          _context2.p = 1;
+          _context2.n = 2;
+          return (0,_services_api__WEBPACK_IMPORTED_MODULE_2__.getDailyReports)(id, 7);
+        case 2:
+          res = _context2.v;
+          setDailyReports(((_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.reports) || []);
+          _context2.n = 4;
+          break;
+        case 3:
+          _context2.p = 3;
+          _t2 = _context2.v;
+        case 4:
+          return _context2.a(2);
+      }
+    }, _callee2, null, [[1, 3]]);
+  })), [id]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    fetchData();
+    fetchDaily();
+    var timer = setInterval(fetchData, 10000);
+    return function () {
+      return clearInterval(timer);
+    };
+  }, [fetchData]);
+  if (loading || !elderly) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+      className: "container",
+      style: {
+        textAlign: 'center',
+        paddingTop: '200px'
+      },
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+        className: "text-muted",
+        children: "\u52A0\u8F7D\u4E2D..."
+      })
+    });
+  }
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.ScrollView, {
+    scrollY: true,
+    className: "detail-page",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+      className: "card",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+        className: "flex-between mb-16",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+          className: "flex-row",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+            className: "detail-name",
+            children: elderly.name
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+            className: "tag tag-default ml-8",
+            children: [(0,_utils_format__WEBPACK_IMPORTED_MODULE_9__.genderLabel)(elderly.gender), " \xB7 ", elderly.age, "\u5C81"]
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          className: "tag tag-blue",
+          children: [elderly.roomNo, "\u5BA4"]
+        })]
+      }), elderly.medicalHistory && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+        className: "detail-row",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          className: "detail-label",
+          children: "\u75C5\u53F2"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          className: "detail-value",
+          children: elderly.medicalHistory
+        })]
+      }), elderly.emergencyContact && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+        className: "detail-row",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          className: "detail-label",
+          children: "\u7D27\u6025\u8054\u7CFB\u4EBA"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          className: "detail-value",
+          children: [elderly.emergencyContact, " ", elderly.emergencyPhone]
+        })]
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+      className: "tab-bar",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+        className: "tab-item ".concat(activeTab === 'realtime' ? 'tab-active' : ''),
+        onClick: function onClick() {
+          return setActiveTab('realtime');
+        },
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          children: "\u5B9E\u65F6\u76D1\u63A7"
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+        className: "tab-item ".concat(activeTab === 'daily' ? 'tab-active' : ''),
+        onClick: function onClick() {
+          return setActiveTab('daily');
+        },
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          children: "\u5065\u5EB7\u65E5\u62A5"
+        })
+      })]
+    }), activeTab === 'realtime' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+      className: "card",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_components_vital_panel_vital_panel__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        data: radarData,
+        loading: false
+      })
+    }), activeTab === 'daily' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+      children: dailyReports.length === 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+        className: "card",
+        style: {
+          textAlign: 'center',
+          padding: '60px 0'
+        },
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+          className: "text-muted",
+          children: "\u6682\u65E0\u65E5\u62A5\u6570\u636E"
+        })
+      }) : dailyReports.map(function (r) {
+        var hrColor = r.heartRateStatus === 'danger' ? '#f5222d' : r.heartRateStatus === 'warning' ? '#fa8c16' : '#52c41a';
+        var brColor = r.breathRateStatus === 'danger' ? '#f5222d' : r.breathRateStatus === 'warning' ? '#fa8c16' : '#52c41a';
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+          className: "card daily-card",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+            className: "flex-between mb-16",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+              className: "daily-date",
+              children: (0,_utils_format__WEBPACK_IMPORTED_MODULE_9__.formatDate)(r.date)
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+              className: "text-muted",
+              children: [r.dataCount, "\u6761\u6570\u636E"]
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+            className: "daily-vitals",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+              className: "daily-vital-item",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "daily-vital-label",
+                children: "\u5FC3\u7387"
+              }), r.heartRateAvg !== null ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "daily-vital-value",
+                style: {
+                  color: hrColor
+                },
+                children: ["\u5747", r.heartRateAvg, " (", r.heartRateMin, "-", r.heartRateMax, ")"]
+              }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "text-muted",
+                children: "\u65E0\u6570\u636E"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "daily-vital-unit",
+                children: "BPM"
+              })]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+              className: "daily-vital-item",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "daily-vital-label",
+                children: "\u547C\u5438"
+              }), r.breathRateAvg !== null ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "daily-vital-value",
+                style: {
+                  color: brColor
+                },
+                children: ["\u5747", r.breathRateAvg, " (", r.breathRateMin, "-", r.breathRateMax, ")"]
+              }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "text-muted",
+                children: "\u65E0\u6570\u636E"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+                className: "daily-vital-unit",
+                children: "\u6B21/\u5206"
+              })]
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+            className: "daily-footer",
+            children: [r.fallCount > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+              className: "tag tag-red mr-8",
+              children: ["\u8DCC\u5012", r.fallCount, "\u6B21"]
+            }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+              className: "tag tag-green mr-8",
+              children: "\u65E0\u8DCC\u5012"
+            }), r.alertCount > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+              className: "tag tag-orange",
+              children: [r.alertCount, "\u6761\u544A\u8B66"]
+            }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.Text, {
+              className: "tag tag-green",
+              children: "\u65E0\u544A\u8B66"
+            })]
+          })]
+        }, r.date);
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_8__.View, {
+      style: {
+        height: '40px'
+      }
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/components/vital-panel/vital-panel.tsx":
+/*!****************************************************!*\
+  !*** ./src/components/vital-panel/vital-panel.tsx ***!
+  \****************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ VitalPanel; }
+/* harmony export */ });
+/* harmony import */ var _tarojs_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @tarojs/components */ "./node_modules/@tarojs/plugin-platform-weapp/dist/components-react.js");
+/* harmony import */ var _utils_format__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils/format */ "./src/utils/format.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/cjs/react-jsx-runtime.production.min.js");
+
+
+
+
+/** 活动量映射 */
+var activityMap = {
+  stationary: 5,
+  resting: 15,
+  low: 30,
+  moderate: 55,
+  active: 75,
+  high: 90,
+  walking: 85
+};
+function VitalPanel(_ref) {
+  var _activityMap$data$act;
+  var data = _ref.data,
+    loading = _ref.loading;
+  if (!data) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+      className: "vp-empty",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+        className: "text-muted",
+        children: loading ? '加载中...' : '暂无雷达数据'
+      })
+    });
+  }
+  var hr = data.heartRate;
+  var br = data.breathRate;
+  var activity = (_activityMap$data$act = activityMap[data.activityLevel]) !== null && _activityMap$data$act !== void 0 ? _activityMap$data$act : 0;
+  var hrColor = hr < 40 || hr > 120 ? '#f5222d' : hr < 60 || hr > 90 ? '#fa8c16' : '#52c41a';
+  var brColor = br < 8 || br > 30 ? '#f5222d' : br < 12 || br > 24 ? '#fa8c16' : '#52c41a';
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+    className: "vp-panel",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+      className: "vp-gauges",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+        className: "vp-gauge",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+          className: "vp-gauge-circle",
+          style: {
+            borderColor: hrColor
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+            className: "vp-gauge-value",
+            style: {
+              color: hrColor
+            },
+            children: hr
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+            className: "vp-gauge-unit",
+            children: "BPM"
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: "vp-gauge-label",
+          children: "\u5FC3\u7387"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+        className: "vp-gauge",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+          className: "vp-gauge-circle",
+          style: {
+            borderColor: brColor
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+            className: "vp-gauge-value",
+            style: {
+              color: brColor
+            },
+            children: br
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+            className: "vp-gauge-unit",
+            children: "\u6B21/\u5206"
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: "vp-gauge-label",
+          children: "\u547C\u5438"
+        })]
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+      className: "vp-tags",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+        className: "vp-tag-item",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: "vp-tag-label",
+          children: "\u6D3B\u52A8\u91CF"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+          className: "vp-progress-bar",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+            className: "vp-progress-fill",
+            style: {
+              width: "".concat(activity, "%"),
+              backgroundColor: activity > 80 ? '#fa8c16' : '#1890ff'
+            }
+          })
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+        className: "vp-tag-row",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: "vp-tag-label",
+          children: "\u8DCC\u5012"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: data.fallStatus === 1 ? 'tag tag-red' : 'tag tag-green',
+          children: data.fallStatus === 1 ? '⚠ 跌倒!' : '✓ 安全'
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+        className: "vp-tag-row",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: "vp-tag-label",
+          children: "\u5728\u5E8A"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: data.inBed === 1 ? 'tag tag-blue' : 'tag tag-orange',
+          children: data.inBed === 1 ? '在床' : '离床'
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
+          className: "tag tag-default ml-8",
+          children: (0,_utils_format__WEBPACK_IMPORTED_MODULE_2__.postureLabel)(data.bodyPosture)
+        })]
+      })]
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./src/pages/elderly-detail/elderly-detail.tsx":
+/*!*****************************************************!*\
+  !*** ./src/pages/elderly-detail/elderly-detail.tsx ***!
+  \*****************************************************/
+/***/ (function(__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
+
+/* harmony import */ var _tarojs_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @tarojs/runtime */ "./node_modules/@tarojs/runtime/dist/runtime.esm.js");
+/* harmony import */ var _node_modules_tarojs_taro_loader_lib_entry_cache_js_name_pages_elderly_detail_elderly_detail_elderly_detail_tsx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !!../../../node_modules/@tarojs/taro-loader/lib/entry-cache.js?name=pages/elderly-detail/elderly-detail!./elderly-detail.tsx */ "./node_modules/@tarojs/taro-loader/lib/entry-cache.js?name=pages/elderly-detail/elderly-detail!./src/pages/elderly-detail/elderly-detail.tsx");
+
+
+var config = {"navigationBarTitleText":"老人详情"};
+
+
+var inst = Page((0,_tarojs_runtime__WEBPACK_IMPORTED_MODULE_1__.createPageConfig)(_node_modules_tarojs_taro_loader_lib_entry_cache_js_name_pages_elderly_detail_elderly_detail_elderly_detail_tsx__WEBPACK_IMPORTED_MODULE_0__["default"], 'pages/elderly-detail/elderly-detail', {root:{cn:[]}}, config || {}))
+
+
+/* unused harmony default export */ var __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_tarojs_taro_loader_lib_entry_cache_js_name_pages_elderly_detail_elderly_detail_elderly_detail_tsx__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+/***/ })
+
+},
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ var __webpack_exec__ = function(moduleId) { return __webpack_require__(__webpack_require__.s = moduleId); }
+/******/ __webpack_require__.O(0, ["taro","vendors","common"], function() { return __webpack_exec__("./src/pages/elderly-detail/elderly-detail.tsx"); });
+/******/ var __webpack_exports__ = __webpack_require__.O();
+/******/ }
+]);
+//# sourceMappingURL=elderly-detail.js.map

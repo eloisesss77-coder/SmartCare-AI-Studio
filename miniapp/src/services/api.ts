@@ -17,6 +17,27 @@ const BASE_URL = 'https://anban.org.cn/api/v1';
 // 注意：微信开发者工具中开发测试可关闭「不校验合法域名」
 // 正式版需在小程序后台配置 request 合法域名为 anban.org.cn
 
+// ---------- 认证竞态控制 ----------
+
+let _loginReady = false;
+
+/** app.tsx 登录完成后调用，通知 api 层可以安全发请求 */
+export function setLoginReady() {
+  _loginReady = true;
+}
+
+/** 等待登录完成（最多等 10 秒），确保 familyId 已写入 storage */
+async function ensureAuth(): Promise<void> {
+  if (_loginReady) return;
+  // 轮询等待，最长 10 秒
+  for (let i = 0; i < 40; i++) {
+    if (_loginReady || Taro.getStorageSync('familyId')) return;
+    await new Promise(r => setTimeout(r, 250));
+  }
+}
+
+// ---------- Storage 工具 ----------
+
 /** 获取本地存储的 familyId */
 function getFamilyId(): string {
   return Taro.getStorageSync('familyId') || '';
@@ -27,6 +48,8 @@ function getToken(): string {
   return Taro.getStorageSync('token') || '';
 }
 
+// ---------- 请求封装 ----------
+
 /** 通用请求封装 */
 async function request<T>(
   path: string,
@@ -34,9 +57,14 @@ async function request<T>(
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
     data?: Record<string, unknown>;
     header?: Record<string, string>;
+    needAuth?: boolean;  // 是否需要等待登录完成
   } = {}
 ): Promise<ApiResponse<T>> {
-  const { method = 'GET', data, header = {} } = options;
+  const { method = 'GET', data, header = {}, needAuth = true } = options;
+
+  if (needAuth) {
+    await ensureAuth();
+  }
 
   const res = await Taro.request({
     url: `${BASE_URL}${path}`,
@@ -52,10 +80,14 @@ async function request<T>(
 
   if (res.statusCode >= 200 && res.statusCode < 300) {
     const body = res.data as any;
-    // 业务层鉴权失败（如 token 过期）也按错误处理
-    if (body?.code === 401 || body?.detail === 'Not authenticated') {
-      Taro.showToast({ title: '登录已过期，请重启小程序', icon: 'none', duration: 2500 });
-      throw new Error('认证已过期');
+    // 业务层 code 字段检查：code 存在且不为 0/200 时视为业务错误
+    if (body && typeof body.code === 'number' && body.code !== 0 && body.code !== 200) {
+      if (body.code === 401 || body?.detail === 'Not authenticated') {
+        Taro.showToast({ title: '登录已过期，请重启小程序', icon: 'none', duration: 2500 });
+        throw new Error('认证已过期');
+      }
+      const msg = body.message || body.detail || `业务错误(code=${body.code})`;
+      throw new Error(msg);
     }
     return body as ApiResponse<T>;
   }
@@ -72,10 +104,11 @@ export async function familyLogin(code: string, nickname?: string): Promise<ApiR
   return request<FamilyInfo>('/family/register', {
     method: 'POST',
     data: {
-      openid: code, // 实际流程：前端先 wx.login 获取 code，后端用 code 换 openid
+      openid: code,
       nickname: nickname || '',
       phone: '',
     },
+    needAuth: false,
   });
 }
 

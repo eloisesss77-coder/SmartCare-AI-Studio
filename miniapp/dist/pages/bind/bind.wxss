@@ -1,1 +1,82 @@
-.bind-page{min-height:100vh;padding:20rpx}.bind-title{display:block;font-size:34rpx;font-weight:700;margin-bottom:12rpx}.bind-desc{color:#999;display:block;font-size:26rpx;line-height:1.5;margin-bottom:32rpx}.bind-input-group{margin-bottom:24rpx}.bind-label{color:#333;display:block;font-size:26rpx;font-weight:500;margin-bottom:12rpx}.bind-input-row{align-items:center;display:flex;flex-direction:row;gap:16rpx}.bind-input{background:#fafafa;border:2rpx solid #d9d9d9;border-radius:12rpx;flex:1;font-size:32rpx;height:80rpx;letter-spacing:8rpx;padding:0 24rpx;text-align:center}.relation-list{display:flex;flex-direction:row;gap:16rpx}.relation-chip{background:#f5f5f5;border-radius:8rpx;color:#666;font-size:26rpx;padding:16rpx 28rpx}.relation-chip-active{background:#e6f7ff;color:#1890ff;font-weight:600}.bind-tips{margin-top:32rpx;text-align:center}.btn-loading{opacity:.6}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].oneOf[0].use[4]!./src/pages/bind/bind.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************/
+.bind-page {
+  padding: 20rpx;
+  min-height: 100vh;
+}
+
+.bind-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.bind-desc {
+  font-size: 26rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 32rpx;
+  line-height: 1.5;
+}
+
+.bind-input-group {
+  margin-bottom: 24rpx;
+}
+
+.bind-label {
+  font-size: 26rpx;
+  color: #333;
+  display: block;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.bind-input-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.bind-input {
+  flex: 1;
+  height: 80rpx;
+  padding: 0 24rpx;
+  border: 2rpx solid #d9d9d9;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  letter-spacing: 8rpx;
+  text-align: center;
+  background: #fafafa;
+}
+
+.relation-list {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+.relation-chip {
+  padding: 16rpx 28rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+  background: #f5f5f5;
+}
+
+.relation-chip-active {
+  color: #1890ff;
+  background: #e6f7ff;
+  font-weight: 600;
+}
+
+.bind-tips {
+  margin-top: 32rpx;
+  text-align: center;
+}
+
+.btn-loading {
+  opacity: 0.6;
+}
