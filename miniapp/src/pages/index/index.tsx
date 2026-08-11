@@ -10,6 +10,7 @@ import './index.scss';
 export default function Index() {
   const [list, setList] = useState<MyElderlyItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ type: string; message: string; elderlyId: number }>({ type: '', message: '', elderlyId: 0 });
 
@@ -18,6 +19,7 @@ export default function Index() {
       const res = await getMyElderly();
       const data = res.data || [];
       setList(data);
+      setError(false);
 
       // 检查是否有跌倒告警
       const fallItem = data.find((item) => item.latestRadarData?.fallStatus === 1);
@@ -30,6 +32,10 @@ export default function Index() {
         setShowAlert(true);
       }
     } catch {
+      // 已绑定过数据时保留旧列表，不清空
+      if (list.length === 0) {
+        setError(true);
+      }
       Taro.showToast({ title: '加载失败', icon: 'none' });
     } finally {
       setLoading(false);
@@ -87,7 +93,16 @@ export default function Index() {
       />
 
       {/* 空状态 */}
-      {list.length === 0 ? (
+      {error && list.length === 0 ? (
+        <View className="empty-page">
+          <Text className="empty-icon">📡</Text>
+          <Text className="empty-title">网络连接失败</Text>
+          <Text className="empty-desc">请检查网络后重试</Text>
+          <View className="btn btn-primary btn-block" onClick={fetchData}>
+            重新加载
+          </View>
+        </View>
+      ) : list.length === 0 ? (
         <View className="empty-page">
           <Text className="empty-icon">🏠</Text>
           <Text className="empty-title">还没有绑定老人</Text>

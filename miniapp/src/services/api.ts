@@ -51,7 +51,13 @@ async function request<T>(
   });
 
   if (res.statusCode >= 200 && res.statusCode < 300) {
-    return res.data as ApiResponse<T>;
+    const body = res.data as any;
+    // 业务层鉴权失败（如 token 过期）也按错误处理
+    if (body?.code === 401 || body?.detail === 'Not authenticated') {
+      Taro.showToast({ title: '登录已过期，请重启小程序', icon: 'none', duration: 2500 });
+      throw new Error('认证已过期');
+    }
+    return body as ApiResponse<T>;
   }
   // 提取后端返回的错误信息
   const body = res.data as any;
