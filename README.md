@@ -36,17 +36,16 @@ SmartCare-AI-Studio/
 ├── README.md                  # 本文件
 ├── 00-Company/                # 公司级规范（愿景、技术栈、路线图、编码规范）
 ├── 01-Agents/                 # AI 团队成员（11 个角色 + 全局流程）
-├── 02-Knowledge/              # 领域知识库（养老政策、Zabbix、Dify）
+├── 02-Knowledge/              # 领域知识库（养老政策、Dify）
 ├── 03-Projects/
 │   └── smartcare-monitor/     # ★ 主项目
 │       ├── backend/           #   FastAPI 后端（Python）
 │       ├── frontend/          #   Web 管理端（React）
 │       ├── miniapp/           #   安伴 Guardian 小程序（Taro）
 │       ├── radar-collector/   #   雷达数据采集器
-│       ├── zabbix/            #   Zabbix 监控集成
 │       ├── scripts/           #   运维脚本 + 测试数据
 │       └── sql/               #   数据库初始化
-├── 04-Templates/              # 代码模板（FastAPI/React/MySQL/Zabbix）
+├── 04-Templates/              # 代码模板（FastAPI/React/MySQL）
 └── 05-Output/                 # 产出物存档
 ```
 
