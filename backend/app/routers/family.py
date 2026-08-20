@@ -1,17 +1,18 @@
-"""家属管理路由：注册/登录、绑定码机制、绑定/解绑老人、我的老人列表"""
+"""家属管理路由：注册/登录、绑定码机制、绑定/解绑老人、我的老人列表、家属端数据查询"""
 import logging
 import random
 import string
 from datetime import datetime, timedelta
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Header
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, func, case
 
 from app.database import get_db
 from app.models import (
     Family, FamilyElderly, Elderly, User, BindCode,
-    RadarData, DeviceGeneric, AlertRecord,
+    RadarData, RadarDevice, DeviceGeneric, AlertRecord,
 )
 from app.schemas import (
     ApiResponse,
@@ -20,6 +21,10 @@ from app.schemas import (
     FamilyElderlyResponse,
     GenerateBindCodeRequest,
     UseBindCodeRequest,
+    PaginatedData,
+    AlertRecordResponse,
+    RadarDataResponse,
+    HandleAlertRequest,
 )
 from app.dependencies.auth import get_current_user
 
@@ -366,7 +371,7 @@ def use_bind_code(
     })
 
 
-@router.get("/elderly/{elderly_id}", response_model=ApiResponse)
+@router.get("/elderly/{elderly_id}/bindings", response_model=ApiResponse)
 def get_elderly_families(
     elderly_id: int,
     user: User = Depends(get_current_user),
@@ -399,6 +404,279 @@ def get_elderly_families(
     ]
 
     return ApiResponse(data=result)
+
+
+# ---------------------------------------------------------------
+# 小程序端（家属）：老人详情 / 雷达数据 / 健康日报 / 告警
+# 使用 X-Family-Id 认证（家属无需 JWT）
+# ---------------------------------------------------------------
+
+def _get_family_bound_elderly(family_id: int, elderly_id: int, db: Session) -> Elderly:
+    """校验家属是否存在且已绑定指定老人，返回老人对象"""
+    family = db.query(Family).filter(Family.id == family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="家属账号不存在")
+
+    binding = db.query(FamilyElderly).filter(
+        FamilyElderly.family_id == family_id,
+        FamilyElderly.elderly_id == elderly_id,
+    ).first()
+    if not binding:
+        raise HTTPException(status_code=403, detail="未绑定该老人")
+
+    elderly = db.query(Elderly).filter(Elderly.id == elderly_id).first()
+    if not elderly:
+        raise HTTPException(status_code=404, detail="老人不存在")
+    return elderly
+
+
+@router.get("/elderly/{elderly_id}", response_model=ApiResponse)
+def get_family_elderly_detail(
+    elderly_id: int,
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """小程序端：老人详情（需已绑定）"""
+    elderly = _get_family_bound_elderly(x_family_id, elderly_id, db)
+    return ApiResponse(data={
+        "id": elderly.id,
+        "name": elderly.name,
+        "age": elderly.age,
+        "gender": elderly.gender,
+        "roomNo": elderly.room_no,
+        "medicalHistory": elderly.medical_history or "",
+        "emergencyContact": elderly.emergency_contact or "",
+        "emergencyPhone": elderly.emergency_phone or "",
+        "radarDeviceSn": elderly.radar_device.device_sn if elderly.radar_device else "",
+        "status": elderly.status,
+        "createdAt": str(elderly.created_at) if elderly.created_at else None,
+    })
+
+
+@router.get("/elderly/{elderly_id}/radar-data", response_model=ApiResponse)
+def get_family_elderly_radar_data(
+    elderly_id: int,
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """小程序端：老人最新雷达数据"""
+    _get_family_bound_elderly(x_family_id, elderly_id, db)
+    radar_data = (
+        db.query(RadarData)
+        .filter(RadarData.elder_id == elderly_id)
+        .order_by(desc(RadarData.timestamp))
+        .first()
+    )
+    if not radar_data:
+        return ApiResponse(data=None)
+    return ApiResponse(data=RadarDataResponse.model_validate(radar_data))
+
+
+@router.get("/elderly/{elderly_id}/daily-reports", response_model=ApiResponse)
+def get_family_daily_reports(
+    elderly_id: int,
+    days: int = Query(7, ge=1, le=90, description="查询最近N天"),
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """小程序端：老人健康日报（按天聚合雷达数据）"""
+    elderly = _get_family_bound_elderly(x_family_id, elderly_id, db)
+    start_date = datetime.now().date() - timedelta(days=days - 1)
+
+    records = (
+        db.query(
+            func.date(RadarData.timestamp).label("report_date"),
+            func.avg(RadarData.heart_rate).label("hr_avg"),
+            func.min(RadarData.heart_rate).label("hr_min"),
+            func.max(RadarData.heart_rate).label("hr_max"),
+            func.avg(RadarData.breath_rate).label("br_avg"),
+            func.min(RadarData.breath_rate).label("br_min"),
+            func.max(RadarData.breath_rate).label("br_max"),
+            func.sum(case((RadarData.fall_status == 1, 1), else_=0)).label("fall_count"),
+            func.count(RadarData.id).label("data_count"),
+        )
+        .filter(
+            RadarData.elder_id == elderly_id,
+            func.date(RadarData.timestamp) >= start_date,
+        )
+        .group_by(func.date(RadarData.timestamp))
+        .order_by(func.date(RadarData.timestamp).desc())
+        .all()
+    )
+
+    report_dates = [r.report_date for r in records]
+    alert_counts = {}
+    if report_dates:
+        alert_rows = (
+            db.query(
+                func.date(AlertRecord.created_at).label("alert_date"),
+                func.count(AlertRecord.id).label("cnt"),
+            )
+            .filter(
+                AlertRecord.elder_id == elderly_id,
+                func.date(AlertRecord.created_at) >= start_date,
+            )
+            .group_by(func.date(AlertRecord.created_at))
+            .all()
+        )
+        alert_counts = {str(row.alert_date): row.cnt for row in alert_rows}
+
+    daily_list = []
+    for r in records:
+        date_str = str(r.report_date)
+        hr_avg = round(float(r.hr_avg), 0) if r.hr_avg is not None else None
+        br_avg = round(float(r.br_avg), 0) if r.br_avg is not None else None
+
+        hr_status = "normal"
+        if hr_avg is not None:
+            if hr_avg < 40 or hr_avg > 120:
+                hr_status = "danger"
+            elif hr_avg < 60 or hr_avg > 90:
+                hr_status = "warning"
+
+        br_status = "normal"
+        if br_avg is not None:
+            if br_avg < 8 or br_avg > 30:
+                br_status = "danger"
+            elif br_avg < 12 or br_avg > 24:
+                br_status = "warning"
+
+        daily_list.append({
+            "date": date_str,
+            "heartRateAvg": hr_avg,
+            "heartRateMin": int(r.hr_min) if r.hr_min is not None else None,
+            "heartRateMax": int(r.hr_max) if r.hr_max is not None else None,
+            "heartRateStatus": hr_status,
+            "breathRateAvg": br_avg,
+            "breathRateMin": int(r.br_min) if r.br_min is not None else None,
+            "breathRateMax": int(r.br_max) if r.br_max is not None else None,
+            "breathRateStatus": br_status,
+            "fallCount": int(r.fall_count),
+            "alertCount": alert_counts.get(date_str, 0),
+            "dataCount": int(r.data_count),
+        })
+
+    return ApiResponse(data={
+        "elderlyId": elderly_id,
+        "elderlyName": elderly.name,
+        "days": days,
+        "reports": daily_list,
+    })
+
+
+@router.get("/alerts", response_model=ApiResponse)
+def get_family_alerts(
+    page: int = Query(1, ge=1, alias="page", description="页码"),
+    page_size: int = Query(10, ge=1, le=100, alias="pageSize", description="每页数量"),
+    alert_level: Optional[str] = Query(None, alias="alertLevel", description="告警级别"),
+    handled_status: Optional[int] = Query(None, alias="handledStatus", description="处理状态"),
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """小程序端：家属查看绑定老人的告警列表"""
+    family = db.query(Family).filter(Family.id == x_family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="家属账号不存在")
+
+    bound_ids = [
+        r[0]
+        for r in db.query(FamilyElderly.elderly_id)
+        .filter(FamilyElderly.family_id == x_family_id)
+        .all()
+    ]
+
+    query = db.query(AlertRecord)
+    if bound_ids:
+        query = query.filter(AlertRecord.elder_id.in_(bound_ids))
+    else:
+        query = query.filter(AlertRecord.id == -1)  # 未绑定任何老人时返回空
+
+    if alert_level:
+        query = query.filter(AlertRecord.alert_level == alert_level)
+    if handled_status is not None:
+        query = query.filter(AlertRecord.handled_status == handled_status)
+
+    total = query.count()
+    items = (
+        query.order_by(AlertRecord.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
+
+    return ApiResponse(
+        data=PaginatedData(
+            list=[AlertRecordResponse.model_validate(item) for item in items],
+            total=total,
+            page=page,
+            page_size=page_size,
+        )
+    )
+
+
+@router.get("/alerts/{alert_id}", response_model=ApiResponse)
+def get_family_alert_detail(
+    alert_id: int,
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """小程序端：家属查看告警详情"""
+    family = db.query(Family).filter(Family.id == x_family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="家属账号不存在")
+
+    bound_ids = [
+        r[0]
+        for r in db.query(FamilyElderly.elderly_id)
+        .filter(FamilyElderly.family_id == x_family_id)
+        .all()
+    ]
+
+    query = db.query(AlertRecord).filter(AlertRecord.id == alert_id)
+    if bound_ids:
+        query = query.filter(AlertRecord.elder_id.in_(bound_ids))
+
+    alert = query.first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="告警记录不存在")
+    return ApiResponse(data=AlertRecordResponse.model_validate(alert))
+
+
+@router.put("/alerts/{alert_id}/handle", response_model=ApiResponse)
+def handle_family_alert(
+    alert_id: int,
+    req: HandleAlertRequest,
+    x_family_id: int = Header(..., alias="X-Family-Id", description="家属账号ID"),
+    db: Session = Depends(get_db),
+):
+    """小程序端：家属处理告警（标记已读）"""
+    family = db.query(Family).filter(Family.id == x_family_id).first()
+    if not family:
+        raise HTTPException(status_code=404, detail="家属账号不存在")
+
+    bound_ids = [
+        r[0]
+        for r in db.query(FamilyElderly.elderly_id)
+        .filter(FamilyElderly.family_id == x_family_id)
+        .all()
+    ]
+
+    query = db.query(AlertRecord).filter(AlertRecord.id == alert_id)
+    if bound_ids:
+        query = query.filter(AlertRecord.elder_id.in_(bound_ids))
+
+    alert = query.first()
+    if not alert:
+        raise HTTPException(status_code=404, detail="告警记录不存在")
+
+    alert.handled_status = req.handled_status
+    alert.handled_by = req.handled_by
+    alert.handled_at = datetime.now()
+    alert.handle_remark = req.handle_remark or ""
+
+    db.commit()
+    db.refresh(alert)
+    return ApiResponse(message="处理成功", data=AlertRecordResponse.model_validate(alert))
 
 
 @router.delete("/unbind/{binding_id}", response_model=ApiResponse)
