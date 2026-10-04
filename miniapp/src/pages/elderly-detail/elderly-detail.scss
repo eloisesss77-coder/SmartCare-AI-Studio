@@ -1,0 +1,102 @@
+.detail-page {
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.detail-name {
+  font-size: 38px;
+  font-weight: 700;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.detail-label {
+  font-size: 24px;
+  color: #999;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 26px;
+  color: #333;
+  flex: 1;
+}
+
+.tab-bar {
+  display: flex;
+  flex-direction: row;
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24px 0;
+  font-size: 28px;
+  color: #666;
+  border-bottom: 4px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-active {
+  color: #1890ff;
+  font-weight: 600;
+  border-bottom-color: #1890ff;
+}
+
+.daily-card {
+  margin-bottom: 16px;
+}
+
+.daily-date {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+.daily-vitals {
+  display: flex;
+  flex-direction: row;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 20px 0;
+  margin-bottom: 16px;
+}
+
+.daily-vital-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.daily-vital-label {
+  font-size: 22px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.daily-vital-value {
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.daily-vital-unit {
+  font-size: 20px;
+  color: #999;
+}
+
+.daily-footer {
+  display: flex;
+  flex-direction: row;
+}

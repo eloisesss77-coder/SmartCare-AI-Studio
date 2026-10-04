@@ -1,0 +1,62 @@
+.alert-page {
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.filter-bar {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-chip {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 26px;
+  color: #666;
+  background: #fff;
+}
+
+.filter-chip-active {
+  color: #1890ff;
+  background: #e6f7ff;
+  font-weight: 600;
+}
+
+.alert-list {
+  height: calc(100vh - 160px);
+}
+
+.alert-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.alert-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 16px;
+  margin-top: 8px;
+}
+
+.alert-type {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+.alert-level {
+  font-size: 22px;
+  margin-left: 12px;
+}
+
+.alert-msg {
+  font-size: 24px;
+  color: #666;
+  line-height: 1.5;
+}
