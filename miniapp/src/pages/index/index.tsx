@@ -1,130 +1,160 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
-import Taro, { usePullDownRefresh, useDidShow } from '@tarojs/taro';
-import { getMyElderly } from '../../services/api';
-import ElderlyCard from '../../components/elderly-card/elderly-card';
-import AlertBanner from '../../components/alert-banner/alert-banner';
-import type { MyElderlyItem } from '../../types';
+import Taro, { useDidShow } from '@tarojs/taro';
+import { getMyElderly, getFamilyMe } from '../../services/api';
+import type { ElderlyItem, FamilyMe } from '../../types';
 import './index.scss';
 
 export default function Index() {
-  const [list, setList] = useState<MyElderlyItem[]>([]);
+  const [list, setList] = useState<ElderlyItem[]>([]);
+  const [family, setFamily] = useState<FamilyMe | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertInfo, setAlertInfo] = useState<{ type: string; message: string; elderlyId: number }>({ type: '', message: '', elderlyId: 0 });
-  const listRef = useRef<MyElderlyItem[]>([]);
 
   const fetchData = useCallback(async () => {
+    // 隐私检查
+    if (Taro.getStorageSync('privacyAgreed') !== '1.0') {
+      Taro.reLaunch({ url: '/pages/privacy/privacy' });
+      return;
+    }
     try {
-      const res = await getMyElderly();
-      const data = res.data || [];
-      setList(data);
-      listRef.current = data;
-      setError(false);
-
-      // 检查是否有跌倒告警
-      const fallItem = data.find((item) => item.latestRadarData?.fallStatus === 1);
-      if (fallItem) {
-        setAlertInfo({
-          type: 'fall',
-          message: `${fallItem.elderlyName}（${fallItem.roomNo}室）检测到跌倒！`,
-          elderlyId: fallItem.elderlyId,
-        });
-        setShowAlert(true);
-      }
-    } catch {
-      // 已绑定过数据时保留旧列表，不清空
-      if (listRef.current.length === 0) {
-        setError(true);
-      }
+      const [elderRes, famRes] = await Promise.all([getMyElderly(), getFamilyMe()]);
+      setList(elderRes.data || []);
+      setFamily(famRes.data || null);
+    } catch (e) {
       Taro.showToast({ title: '加载失败', icon: 'none' });
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useDidShow(fetchData);
 
-  useDidShow(() => {
-    fetchData();
-  });
-
-  usePullDownRefresh(() => {
-    fetchData().then(() => Taro.stopPullDownRefresh());
-  });
-
-  const handleCardTap = (id: number) => {
-    Taro.navigateTo({ url: `/pages/elderly-detail/elderly-detail?id=${id}` });
+  const handleElderTap = (id: number) => {
+    Taro.navigateTo({ url: `/pages/elder-detail/elder-detail?id=${id}` });
   };
 
-  const handleAdd = () => {
-    Taro.navigateTo({ url: '/pages/bind/bind' });
+  const handleAlertTap = () => {
+    Taro.switchTab({ url: '/pages/alerts/alerts' });
   };
 
-  const handleCall = () => {
-    Taro.makePhoneCall({ phoneNumber: '120' });
-  };
-
-  const handleViewAlert = () => {
-    setShowAlert(false);
-    Taro.navigateTo({ url: `/pages/elderly-detail/elderly-detail?id=${alertInfo.elderlyId}` });
-  };
-
-  if (loading) {
-    return (
-      <View className="container">
-        <View style={{ textAlign: 'center', paddingTop: '200px' }}>
-          <Text className="text-muted">加载中...</Text>
-        </View>
-      </View>
-    );
-  }
+  // 今日提醒取最近的 2 条告警
+  const todayTips = list.slice(0, 2);
 
   return (
-    <View className="container">
-      {/* 告警横幅 */}
-      <AlertBanner
-        visible={showAlert}
-        alertType={alertInfo.type}
-        message={alertInfo.message}
-        onCall={handleCall}
-        onView={handleViewAlert}
-      />
+    <View className='page'>
+      {/* 顶部栏 */}
+      <View className='top-bar'>
+        <Text className='title'>安伴智慧科技守护</Text>
+        <Text className='sub'>今天是 {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })}</Text>
+      </View>
 
-      {/* 空状态 */}
-      {error && list.length === 0 ? (
-        <View className="empty-page">
-          <Text className="empty-icon">📡</Text>
-          <Text className="empty-title">网络连接失败</Text>
-          <Text className="empty-desc">请检查网络后重试</Text>
-          <View className="btn btn-primary btn-block" onClick={fetchData}>
-            重新加载
-          </View>
-        </View>
-      ) : list.length === 0 ? (
-        <View className="empty-page">
-          <Text className="empty-icon">🏠</Text>
-          <Text className="empty-title">还没有绑定老人</Text>
-          <Text className="empty-desc">绑定后即可随时查看爸妈的健康状态</Text>
-          <View className="btn btn-primary btn-block" onClick={handleAdd}>
-            立即绑定
-          </View>
-        </View>
-      ) : (
-        <ScrollView scrollY className="elderly-list">
+      {loading && <View className='loading'><Text className='muted'>加载中...</Text></View>}
+
+      {!loading && (
+        <ScrollView scrollY className='content'>
+          {/* 家庭整体状态 Hero */}
+          {family && (
+            <View className='hero'>
+              <Text className='hero-small'>家庭整体守护状态</Text>
+              <Text className='hero-big'>
+                {family.pendingAlerts > 0 ? '需关注 · 有紧急提醒' : '安心 · 运行正常'}
+              </Text>
+              <Text className='hero-small'>
+                {family.elderlyCount}位老人 · {family.deviceCount}台设备 · {family.unreadAlerts}个待处理提醒
+              </Text>
+            </View>
+          )}
+
+          {/* 我的老人 */}
+          <Text className='section-title'>我的老人</Text>
+
+          {list.length === 0 && (
+            <View className='empty'>
+              <Text className='empty-icon'>🏠</Text>
+              <Text className='empty-title'>还没有绑定老人</Text>
+              <Text className='empty-desc'>请先在管理端生成绑定码，或手动绑定设备</Text>
+              <View className='btn-primary btn-block' onClick={() => Taro.navigateTo({ url: '/pages/bind/bind' })}>
+                立即绑定
+              </View>
+            </View>
+          )}
+
           {list.map((item) => (
-            <ElderlyCard
-              key={item.elderlyId}
-              item={item}
-              onTap={() => handleCardTap(item.elderlyId)}
-            />
+            <View key={item.elderlyId} className='card elder-card' onClick={() => handleElderTap(item.elderlyId)}>
+              <View className='elder-header'>
+                <View className='avatar'>👴</View>
+                <View className='elder-info'>
+                  <Text className='elder-name'>{item.elderlyName}</Text>
+                  <Text className='muted'>
+                    {item.relation || ''} · {item.age}岁 · {item.familyName || ''}
+                  </Text>
+                </View>
+                <Text className={`tag ${item.statusLevel === 'warning' || item.statusLevel === 'danger' ? 'tag-red' : 'tag-green'}`}>
+                  {item.statusTag} ›
+                </Text>
+              </View>
+
+              {item.statusLevel !== 'normal' && (
+                <View className='alert-warn'>
+                  ⚠️ {item.lastActivity || '请确认老人状态'}
+                </View>
+              )}
+
+              {item.latestRadarData && (
+                <View className='metric-grid'>
+                  <View className='metric'>
+                    <Text className='metric-big'>{item.latestRadarData.heartRate ?? '--'}</Text>
+                    <Text className='metric-label'>心率 bpm</Text>
+                  </View>
+                  <View className='metric'>
+                    <Text className='metric-big'>{item.latestRadarData.breathRate ?? '--'}</Text>
+                    <Text className='metric-label'>呼吸</Text>
+                  </View>
+                  <View className='metric'>
+                    <Text className='metric-big'>
+                      {item.latestRadarData.inBed ? '在床' : '离床'}
+                    </Text>
+                    <Text className='metric-label'>当前状态</Text>
+                  </View>
+                  <View className='metric'>
+                    <Text className='metric-big'>
+                      {item.latestRadarData.activityLevel === 'stationary' ? '静止' :
+                        item.latestRadarData.activityLevel === 'vigorous' ? '活跃' :
+                        item.latestRadarData.activityLevel ? '活动中' : '--'}
+                    </Text>
+                    <Text className='metric-label'>室内活动</Text>
+                  </View>
+                </View>
+              )}
+            </View>
           ))}
-          <View className="add-hint" onClick={handleAdd}>
-            <Text className="text-muted">+ 添加老人</Text>
+
+          {/* 今日提醒 */}
+          <Text className='section-title'>今日提醒</Text>
+          <View className='tip-item'>
+            {family && family.pendingAlerts > 0 && (
+              <View className='tip alert'>
+                <View className='tip-row'>
+                  <Text className='tip-title'>活动异常</Text>
+                  <Text className='tip-time'>{new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</Text>
+                </View>
+                <Text className='tip-desc'>
+                  {list.find((l) => l.statusLevel !== 'normal')?.elderlyName || '有老人'} · 检测到异常活动
+                </Text>
+                <View className='tip-btn' onClick={handleAlertTap}>查看详情 ›</View>
+              </View>
+            )}
+            {family && family.unreadAlerts === 0 && (
+              <View className='tip ok'>
+                <View className='tip-row'>
+                  <Text className='tip-title'>✓ 今日运行正常</Text>
+                </View>
+                <Text className='tip-desc'>所有设备在线，暂无异常告警</Text>
+              </View>
+            )}
           </View>
+
+          <View style={{ height: '40px' }} />
         </ScrollView>
       )}
     </View>

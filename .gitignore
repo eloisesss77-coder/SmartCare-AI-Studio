@@ -29,3 +29,17 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Miniapp build output
+miniapp/dist/
+miniapp/node_modules/
+miniapp/.temp/
+
+# Local database
+*.db
+*.sqlite
+
+# Misc
+zabbix/
+*.jpg
+*.png

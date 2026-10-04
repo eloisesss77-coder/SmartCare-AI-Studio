@@ -1,76 +1,103 @@
-import { View, Text } from '@tarojs/components';
+import { useState, useEffect } from 'react';
+import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import { getNotifications, updateNotifications } from '../../services/api';
+import type { NotificationSettings } from '../../types';
 import './mine.scss';
 
+const SWITCHES: { key: keyof NotificationSettings; label: string; desc: string }[] = [
+  { key: 'wechat_enabled', label: '微信通知', desc: '接收推送消息总开关' },
+  { key: 'alert_fall', label: '跌倒告警', desc: '紧急情况立即推送' },
+  { key: 'alert_abnormal', label: '异常活动告警', desc: '长时间静止等异常' },
+  { key: 'daily_report', label: '健康日报', desc: '每日早8点推送' },
+  { key: 'weekly_report', label: '健康周报', desc: '每周一推送' },
+];
+
 export default function Mine() {
-  const nickname = Taro.getStorageSync('nickname') || '家属用户';
-  const phone = Taro.getStorageSync('phone') || '';
+  const [settings, setSettings] = useState<NotificationSettings | null>(null);
+  const [nickname, setNickname] = useState('');
+  const [familyName, setFamilyName] = useState('');
 
-  const menuItems = [
-    {
-      label: '绑定管理',
-      desc: '添加或解除老人绑定',
-      onClick: () => Taro.navigateTo({ url: '/pages/bind/bind' }),
-    },
-    {
-      label: '通知设置',
-      desc: '管理告警推送偏好',
-      onClick: () => Taro.showToast({ title: '功能开发中', icon: 'none' }),
-    },
-    {
-      label: '关于我们',
-      desc: '安伴 Guardian v1.0.0',
-      onClick: () => Taro.showModal({
-        title: '安伴 Guardian',
-        content: '智慧养老全屋监护方案\n8合1设备 · 24小时守护\n联系我们：400-xxx-xxxx',
-        showCancel: false,
-      }),
-    },
-  ];
+  useEffect(() => {
+    setNickname(Taro.getStorageSync('nickname') || '家属用户');
+    setFamilyName(Taro.getStorageSync('familyName') || '');
+    getNotifications().then((r) => setSettings(r.data || null)).catch(() => {});
+  }, []);
 
-  const handleClearCache = () => {
-    Taro.showModal({
-      title: '清除缓存',
-      content: '将清除所有本地数据，确定继续？',
-      success: (res) => {
-        if (res.confirm) {
-          Taro.clearStorageSync();
-          Taro.showToast({ title: '已清除', icon: 'success' });
-        }
-      },
-    });
+  const toggle = async (key: keyof NotificationSettings) => {
+    if (!settings) return;
+    const newVal = !settings[key];
+    const newSettings = { ...settings, [key]: newVal };
+    setSettings(newSettings);
+    try {
+      await updateNotifications({ [key]: newVal });
+    } catch {
+      Taro.showToast({ title: '保存失败', icon: 'none' });
+      setSettings(settings); // 回滚
+    }
   };
 
   return (
-    <View className="mine-page">
-      {/* 头像区域 */}
-      <View className="mine-header">
-        <View className="mine-avatar">
-          <Text className="avatar-text">{nickname.charAt(0)}</Text>
-        </View>
-        <Text className="mine-name">{nickname}</Text>
-        {phone && <Text className="text-muted">{phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')}</Text>}
+    <View className='page'>
+      <View className='top-bar'>
+        <Text className='title'>我的</Text>
+        <Text className='sub'>账户与守护设置</Text>
       </View>
 
-      {/* 菜单 */}
-      <View className="card">
-        {menuItems.map((item) => (
-          <View key={item.label} className="mine-menu-item" onClick={item.onClick}>
-            <View>
-              <Text className="mine-menu-label">{item.label}</Text>
-              <Text className="text-muted">{item.desc}</Text>
-            </View>
-            <Text className="mine-arrow">{'>'}</Text>
+      <ScrollView scrollY className='content'>
+        {/* 头像 */}
+        <View className='card mine-header'>
+          <View className='avatar mine-avatar'>👩</View>
+          <View>
+            <Text className='member-name'>{nickname}</Text>
+            <Text className='muted'>{familyName || '家庭成员'}</Text>
           </View>
-        ))}
-      </View>
-
-      <View className="card mt-16" onClick={handleClearCache}>
-        <View className="mine-menu-item">
-          <Text className="text-danger">清除缓存</Text>
-          <Text className="mine-arrow">{'>'}</Text>
         </View>
-      </View>
+
+        {/* 通知开关 */}
+        <Text className='section-title'>通知设置</Text>
+        <View className='card'>
+          {settings && SWITCHES.map((s, i) => (
+            <View key={s.key} className={`switch-row ${i > 0 ? 'border-top' : ''}`}>
+              <View>
+                <Text className='switch-label'>{s.label}</Text>
+                <Text className='switch-desc'>{s.desc}</Text>
+              </View>
+              <View className={`switch ${settings[s.key] ? 'on' : ''}`} onClick={() => toggle(s.key)}>
+                <View className='switch-dot' />
+              </View>
+            </View>
+          ))}
+          {!settings && <Text className='muted'>加载中...</Text>}
+        </View>
+
+        {/* 菜单 */}
+        <Text className='section-title'>其他</Text>
+        <View className='card'>
+          <View className='menu-row' onClick={() => Taro.navigateTo({ url: '/pages/privacy/privacy' })}>
+            <Text className='menu-label'>隐私与数据授权</Text><Text className='arrow'>›</Text>
+          </View>
+          <View className='menu-row border-top' onClick={() => Taro.showModal({ title: '关于', content: '安伴智慧科技守护 v1.0.0\n让爱，不缺席。', showCancel: false })}>
+            <Text className='menu-label'>关于安伴智慧科技守护</Text><Text className='arrow'>›</Text>
+          </View>
+          <View className='menu-row border-top' onClick={() => {
+            Taro.showModal({
+              title: '退出登录',
+              content: '清除本地数据后需重新微信授权',
+              success: (r) => {
+                if (r.confirm) {
+                  Taro.clearStorageSync();
+                  Taro.reLaunch({ url: '/pages/privacy/privacy' });
+                }
+              },
+            });
+          }}>
+            <Text className='menu-label danger'>退出登录</Text>
+          </View>
+        </View>
+
+        <View style={{ height: '40px' }} />
+      </ScrollView>
     </View>
   );
 }

@@ -1,0 +1,95 @@
+.privacy-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.privacy-content {
+  flex: 1;
+  padding: 32px 32px 160px;
+  background: #fff;
+}
+
+.privacy-title {
+  display: block;
+  font-size: 40px;
+  font-weight: 600;
+  color: #1f1f1f;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.privacy-update {
+  display: block;
+  font-size: 22px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.privacy-section {
+  display: block;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1f1f1f;
+  margin: 40px 0 16px;
+  line-height: 1.5;
+}
+
+.privacy-sub {
+  display: block;
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+  margin: 24px 0 12px;
+}
+
+.privacy-paragraph {
+  display: block;
+  font-size: 24px;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
+
+.privacy-footer {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+}
+
+.privacy-tip {
+  display: block;
+  font-size: 22px;
+  color: #888;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.privacy-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 24px;
+  padding: 24px 32px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.privacy-btn {
+  flex: 1;
+  height: 88px;
+  line-height: 88px;
+  text-align: center;
+  font-size: 28px;
+  border-radius: 44px;
+}
+
+.privacy-btn-main {
+  flex: 1.4;
+}

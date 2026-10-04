@@ -135,3 +135,45 @@ def send_alert_to_family(
     page = f"pages/alert/detail?id={alert_id}"
 
     return send_subscribe_message(openid, template_id, msg_data, page)
+
+
+def code_to_session(code: str) -> dict:
+    """
+    用 wx.login 获取的临时凭证 code 换取 openid / session_key / unionid
+
+    Args:
+        code: 小程序 wx.login 返回的 code
+
+    Returns:
+        {"openid": ..., "session_key": ..., "unionid": ...}，失败返回空 dict
+    """
+    if not code:
+        logger.warning("code_to_session: code 为空")
+        return {}
+
+    if not WECHAT_APPID or not WECHAT_SECRET:
+        logger.error("微信 AppID 或 Secret 未配置，无法换取 openid")
+        return {}
+
+    try:
+        with httpx.Client(timeout=10) as client:
+            resp = client.get(
+                "https://api.weixin.qq.com/sns/jscode2session",
+                params={
+                    "appid": WECHAT_APPID,
+                    "secret": WECHAT_SECRET,
+                    "js_code": code,
+                    "grant_type": "authorization_code",
+                },
+            )
+            data = resp.json()
+            if data.get("errcode"):
+                logger.error(f"jscode2session 失败: {data}")
+                return {}
+            if not data.get("openid"):
+                logger.error(f"jscode2session 未返回 openid: {data}")
+                return {}
+            return data
+    except Exception as e:
+        logger.error(f"请求 jscode2session 异常: {e}")
+        return {}

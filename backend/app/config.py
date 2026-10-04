@@ -6,7 +6,7 @@ load_dotenv()
 # 数据库连接
 DATABASE_URL: str = os.getenv(
     "DATABASE_URL",
-    "mysql+pymysql://smartcare:CHANGE_ME@host.docker.internal:3306/smartcare"
+    "mysql+pymysql://smartcare:CHANGE_ME@host.docker.internal:3306/smartcare?charset=utf8mb4"
 )
 
 # 告警通知配置
@@ -33,8 +33,8 @@ ALERT_DEDUP_WINDOW: int = int(os.getenv("ALERT_DEDUP_WINDOW", "300"))
 WECHAT_APPID: str = os.getenv("WECHAT_APPID", "")
 WECHAT_SECRET: str = os.getenv("WECHAT_SECRET", "")
 # 微信订阅消息模板ID（按告警类型区分）
-WECHAT_TEMPLATE_ALERT: str = os.getenv("WECHAT_TEMPLATE_ALERT", "")       # 通用告警通知模板
-WECHAT_TEMPLATE_HEALTH: str = os.getenv("WECHAT_TEMPLATE_HEALTH", "")     # 健康数据日报模板
+WECHAT_TEMPLATE_ALERT: str = os.getenv("WECHAT_TEMPLATE_ALERT", "vPJGPlCdudzcB3C4bnVnH3HF5rO8FSJ0MoPziwq675s")       # 跌倒紧急告警模板
+WECHAT_TEMPLATE_HEALTH: str = os.getenv("WECHAT_TEMPLATE_HEALTH", "")     # 健康数据日报模板（可选）
 
 # JWT 认证配置
 JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "smartcare-jwt-secret-change-in-production")

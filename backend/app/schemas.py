@@ -363,6 +363,17 @@ class FamilyCreate(BaseModel):
         populate_by_name = True
 
 
+class WxLoginRequest(BaseModel):
+    """小程序登录请求：wx.login 的 code 换 openid"""
+    code: str = Field(..., description="wx.login 获取的临时凭证 code")
+    nickname: Optional[str] = Field("", description="微信昵称")
+    avatar_url: Optional[str] = Field("", alias="avatarUrl", description="头像URL")
+    phone: Optional[str] = Field("", description="手机号")
+
+    class Config:
+        populate_by_name = True
+
+
 class FamilyBindElderly(BaseModel):
     """家属绑定老人请求"""
     elderly_id: int = Field(..., alias="elderlyId", description="老人ID")

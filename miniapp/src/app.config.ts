@@ -1,42 +1,38 @@
 export default {
   pages: [
     'pages/index/index',
-    'pages/elderly-detail/elderly-detail',
-    'pages/alert-list/alert-list',
-    'pages/alert-detail/alert-detail',
-    'pages/bind/bind',
+    'pages/alerts/alerts',
+    'pages/reports/reports',
+    'pages/family/family',
     'pages/mine/mine',
+    'pages/elder-detail/elder-detail',
+    'pages/devices/devices',
+    'pages/bind/bind',
+    'pages/privacy/privacy',
   ],
   window: {
     backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#1890ff',
-    navigationBarTitleText: '安伴 Guardian',
-    navigationBarTextStyle: 'white',
-    backgroundColor: '#f5f5f5',
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTitleText: '安伴智慧科技守护',
+    navigationBarTextStyle: 'black',
+    backgroundColor: '#f7f9fb',
   },
   tabBar: {
-    color: '#999999',
-    selectedColor: '#1890ff',
+    color: '#8a949d',
+    selectedColor: '#168f72',
     backgroundColor: '#ffffff',
     borderStyle: 'white',
     list: [
-      {
-        pagePath: 'pages/index/index',
-        text: '🏠 首页',
-      },
-      {
-        pagePath: 'pages/alert-list/alert-list',
-        text: '🔔 告警',
-      },
-      {
-        pagePath: 'pages/mine/mine',
-        text: '👤 我的',
-      },
+      { pagePath: 'pages/index/index', text: '首页' },
+      { pagePath: 'pages/alerts/alerts', text: '告警' },
+      { pagePath: 'pages/reports/reports', text: '报告' },
+      { pagePath: 'pages/family/family', text: '家庭' },
+      { pagePath: 'pages/mine/mine', text: '我的' },
     ],
   },
   permission: {
-    'scope.userLocation': {
-      desc: '你的位置信息将用于紧急情况定位',
-    },
+    'scope.userLocation': { desc: '用于紧急情况定位' },
   },
+  requiredPrivateInfos: ['makePhoneCall'],
+  style: 'v2',
 };
