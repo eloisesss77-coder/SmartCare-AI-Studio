@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安伴 Guardian API 接口文档 v1.0</title>
+<style>
+  :root { --blue: #1677ff; --green: #52c41a; --orange: #fa8c16; --red: #f5222d; --grey: #8c8c8c; --bg: #f5f5f5; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 14px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: #333; padding: 24px; }
+  h1 { font-size: 26px; margin-bottom: 4px; }
+  h2 { font-size: 20px; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--blue); }
+  h3 { font-size: 16px; margin: 20px 0 10px; color: var(--blue); }
+  .meta { color: var(--grey); margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 24px; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+  th { background: #fafafa; font-weight: 600; white-space: nowrap; color: #555; }
+  tr:hover { background: #fafbff; }
+  td:first-child, th:first-child { width: 70px; }
+  td:nth-child(2), th:nth-child(2) { width: 300px; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 4px; }
+  .tag-get { background: #e6f7ff; color: var(--blue); }
+  .tag-post { background: #f6ffed; color: var(--green); }
+  .tag-put { background: #fff7e6; color: var(--orange); }
+  .tag-delete { background: #fff1f0; color: var(--red); }
+  .auth { display: inline-block; padding: 0 6px; border-radius: 3px; font-size: 11px; }
+  .auth-pub { background: #e6f7ff; color: #1677ff; }
+  .auth-jwt { background: #f6ffed; color: #52c41a; }
+  .auth-admin { background: #fff7e6; color: #d46b08; }
+  .auth-fam { background: #f9f0ff; color: #722ed1; }
+  .param-table th { font-size: 12px; }
+  .param-table td { font-size: 13px; }
+  code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-family: Consolas, "Courier New", monospace; font-size: 12px; }
+  pre { background: #1e1e1e; color: #d4d4d4; padding: 14px; border-radius: 8px; overflow-x: auto; line-height: 1.5; font-size: 13px; margin: 10px 0; }
+  .key { color: #9cdcfe; }
+  .str { color: #ce9178; }
+  .num { color: #b5cea8; }
+  .resp-sample { margin-top: 8px; }
+  .desc { color: #666; font-size: 13px; }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; font-size: 13px; }
+  .toc { background: #fff; padding: 16px 24px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 24px; columns: 3; }
+  .toc a { color: var(--blue); text-decoration: none; display: block; padding: 3px 0; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>安伴 Guardian API 接口文档</h1>
+<p class="meta">版本 v1.0 | 基础路径 <code>http://&lt;服务器IP&gt;</code> | 更新时间 2026-07-21</p>
+
+<div class="toc">
+  <a href="#c1">1. 通用说明</a>
+  <a href="#c2">2. 认证 Auth</a>
+  <a href="#c3">3. Dashboard</a>
+  <a href="#c4">4. 老人管理 Elderly</a>
+  <a href="#c5">5. 设备管理 Devices</a>
+  <a href="#c6">6. 告警管理 Alerts</a>
+  <a href="#c7">7. 雷达数据 Radar</a>
+  <a href="#c8">8. 家属/小程序 Family</a>
+  <a href="#c9">9. 用户管理 Users</a>
+  <a href="#c10">10. 健康检查</a>
+</div>
+
+<!-- ===================== 1. 通用说明 ===================== -->
+<h2 id="c1">1. 通用说明</h2>
+
+<h3>通用响应格式</h3>
+<pre>
+{
+  <span class="key">"code"</span>: <span class="num">200</span>,
+  <span class="key">"message"</span>: <span class="str">"success"</span>,
+  <span class="key">"data"</span>: { ... }
+}
+</pre>
+
+<h3>分页响应格式</h3>
+<pre>
+{
+  <span class="key">"code"</span>: <span class="num">200</span>,
+  <span class="key">"message"</span>: <span class="str">"success"</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"list"</span>: [ ... ],
+    <span class="key">"total"</span>: <span class="num">100</span>,
+    <span class="key">"page"</span>: <span class="num">1</span>,
+    <span class="key">"pageSize"</span>: <span class="num">10</span>
+  }
+}
+</pre>
+
+<h3>认证方式</h3>
+<ul>
+  <li><b>公开接口</b>：无需认证头</li>
+  <li><b>JWT 认证</b>：请求头带 <code>Authorization: Bearer &lt;token&gt;</code></li>
+  <li><b>管理端</b>：需 admin / super_admin 角色</li>
+  <li><b>小程序端</b>：请求头带 <code>X-Family-Id: &lt;familyId&gt;</code></li>
+</ul>
+
+<h3>请求参数命名</h3>
+<ul>
+  <li>请求体 JSON key 支持 <b>驼峰命名</b>（如 <code>pageSize</code>、<code>deviceSn</code>、<code>ruleName</code>）</li>
+  <li>响应体 JSON key 统一使用 <b>驼峰命名</b></li>
+  <li>路径参数和 Query 参数均支持驼峰别名（如 <code>?pageSize=10</code>）</li>
+</ul>
+
+<!-- ===================== 2. 认证 ===================== -->
+<h2 id="c2">2. 认证 Auth</h2>
+<p class="desc">前缀 <code>/api/v1/auth</code></p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/auth/login</code></td><td>用户登录，返回 JWT token</td><td><span class="auth auth-pub">公开</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/auth/me</code></td><td>获取当前用户信息</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/auth/change-password</code></td><td>修改密码</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>POST /login</h3>
+
+<p>请求体：</p>
+<pre>
+{
+  <span class="key">"username"</span>: <span class="str">"admin"</span>,
+  <span class="key">"password"</span>: <span class="str">"admin123"</span>
+}
+</pre>
+
+<p>响应：</p>
+<pre>
+{
+  <span class="key">"code"</span>: <span class="num">200</span>,
+  <span class="key">"message"</span>: <span class="str">"success"</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"token"</span>: <span class="str">"eyJhbGciOiJIUzI1NiIs..."</span>,
+    <span class="key">"user"</span>: {
+      <span class="key">"id"</span>: <span class="num">1</span>,
+      <span class="key">"username"</span>: <span class="str">"admin"</span>,
+      <span class="key">"displayName"</span>: <span class="str">"系统管理员"</span>,
+      <span class="key">"role"</span>: <span class="str">"super_admin"</span>,
+      <span class="key">"institutionId"</span>: <span class="num">1</span>
+    }
+  }
+}
+</pre>
+
+<h3>POST /change-password</h3>
+
+<p>请求体：</p>
+<pre>
+{
+  <span class="key">"oldPassword"</span>: <span class="str">"admin123"</span>,
+  <span class="key">"newPassword"</span>: <span class="str">"newPass456"</span>
+}
+</pre>
+
+<!-- ===================== 3. Dashboard ===================== -->
+<h2 id="c3">3. Dashboard</h2>
+<p class="desc">前缀 <code>/api/v1/dashboard</code></p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/dashboard/overview</code></td><td>概览：老人数、在线设备、活跃告警、跌倒数、房间状态</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/dashboard/alert-trend</code></td><td>最近7天告警趋势（按天按类型统计）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/dashboard/device-status</code></td><td>设备状态分布：在线/离线/总数</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>GET /dashboard/overview 响应</h3>
+<pre>
+{
+  <span class="key">"code"</span>: <span class="num">200</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"totalElderly"</span>: <span class="num">12</span>,
+    <span class="key">"onlineDevices"</span>: <span class="num">8</span>,
+    <span class="key">"activeAlerts"</span>: <span class="num">3</span>,
+    <span class="key">"fallCountToday"</span>: <span class="num">0</span>,
+    <span class="key">"roomStatusList"</span>: [
+      { <span class="key">"roomNo"</span>: <span class="str">"101"</span>, <span class="key">"elderlyName"</span>: <span class="str">"张大爷"</span>, <span class="key">"deviceOnline"</span>: <span class="num">true</span>, <span class="key">"inBed"</span>: <span class="num">1</span>, <span class="key">"heartRate"</span>: <span class="num">72</span>, <span class="key">"fallStatus"</span>: <span class="num">0</span> }
+    ],
+    <span class="key">"recentAlerts"</span>: [ ... ]
+  }
+}
+</pre>
+
+<h3>GET /dashboard/alert-trend 响应</h3>
+<pre>
+{
+  <span class="key">"data"</span>: [
+    { <span class="key">"date"</span>: <span class="str">"2026-07-14"</span>, <span class="key">"total"</span>: <span class="num">5</span>, <span class="key">"fall"</span>: <span class="num">1</span>, <span class="key">"heartRate"</span>: <span class="num">2</span>, <span class="key">"breathRate"</span>: <span class="num">2</span> },
+    ...
+  ]
+}
+</pre>
+
+<!-- ===================== 4. 老人管理 ===================== -->
+<h2 id="c4">4. 老人管理 Elderly</h2>
+<p class="desc">前缀 <code>/api/v1/elderly</code></p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/elderly</code></td><td>老人列表（分页+关键字搜索）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/elderly</code></td><td>新增老人</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/elderly/{elderlyId}</code></td><td>老人详情（含绑定的雷达设备信息）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/v1/elderly/{elderlyId}</code></td><td>更新老人信息</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-delete">DELETE</span></td><td><code>/api/v1/elderly/{elderlyId}</code></td><td>删除老人</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/elderly/{elderlyId}/bind-radar</code></td><td>绑定雷达设备到老人</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/elderly/{elderlyId}/radar-data</code></td><td>获取老人最新雷达数据</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/elderly/{elderlyId}/daily-reports</code></td><td>健康日报列表（近N天聚合）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>GET /elderly 参数</h3>
+<table class="param-table">
+<tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+<tr><td><code>page</code></td><td>int</td><td>否</td><td>页码，默认 1</td></tr>
+<tr><td><code>pageSize</code></td><td>int</td><td>否</td><td>每页数量，默认 10，最大 100</td></tr>
+<tr><td><code>keyword</code></td><td>string</td><td>否</td><td>按姓名/房间号模糊搜索</td></tr>
+</table>
+
+<h3>POST /elderly 请求体</h3>
+<pre>
+{
+  <span class="key">"name"</span>: <span class="str">"张大爷"</span>,
+  <span class="key">"age"</span>: <span class="num">78</span>,
+  <span class="key">"gender"</span>: <span class="num">1</span>,
+  <span class="key">"roomNo"</span>: <span class="str">"101"</span>,
+  <span class="key">"medicalHistory"</span>: <span class="str">"高血压、糖尿病"</span>,
+  <span class="key">"emergencyContact"</span>: <span class="str">"张小明"</span>,
+  <span class="key">"emergencyPhone"</span>: <span class="str">"13800001111"</span>,
+  <span class="key">"institutionId"</span>: <span class="num">0</span>,
+  <span class="key">"status"</span>: <span class="num">1</span>
+}
+</pre>
+
+<h3>POST /elderly/{id}/bind-radar 请求体</h3>
+<pre>
+{
+  <span class="key">"radarDeviceId"</span>: <span class="num">1</span>
+}
+</pre>
+
+<!-- ===================== 5. 设备管理 ===================== -->
+<h2 id="c5">5. 设备管理 Devices</h2>
+<p class="desc">前缀 <code>/api/v1/devices</code></p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/devices</code></td><td>设备列表（分页+按分类/在线状态筛选）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/devices</code></td><td>注册新设备</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/devices/categories</code></td><td>获取设备大类（下拉选项）</td><td><span class="auth auth-pub">公开</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/devices/stats/summary</code></td><td>设备统计：按分类统在线/离线</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/devices/{deviceId}</code></td><td>设备详情</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/v1/devices/{deviceId}</code></td><td>更新设备信息</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-delete">DELETE</span></td><td><code>/api/v1/devices/{deviceId}</code></td><td>删除设备</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/devices/data/report</code></td><td><b>设备数据统一上报入口</b></td><td><span class="auth auth-pub">公开</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/devices/{deviceId}/command</code></td><td>向设备下发指令</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>GET /devices 参数</h3>
+<table class="param-table">
+<tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+<tr><td><code>page</code></td><td>int</td><td>否</td><td>页码</td></tr>
+<tr><td><code>pageSize</code></td><td>int</td><td>否</td><td>每页数量</td></tr>
+<tr><td><code>deviceCategory</code></td><td>string</td><td>否</td><td>设备大类筛选</td></tr>
+<tr><td><code>onlineStatus</code></td><td>int</td><td>否</td><td>在线状态: 1在线 0离线</td></tr>
+</table>
+
+<h3>POST /devices 请求体</h3>
+<pre>
+{
+  <span class="key">"deviceSn"</span>: <span class="str">"NB202607001"</span>,
+  <span class="key">"deviceName"</span>: <span class="str">"101厨房烟雾报警器"</span>,
+  <span class="key">"deviceCategory"</span>: <span class="str">"smoke_detector"</span>,
+  <span class="key">"deviceBrand"</span>: <span class="str">"海曼"</span>,
+  <span class="key">"deviceModel"</span>: <span class="str">"HM-608"</span>,
+  <span class="key">"roomNo"</span>: <span class="str">"101"</span>,
+  <span class="key">"elderId"</span>: <span class="num">3</span>,
+  <span class="key">"extraConfig"</span>: <span class="str">"{\"sensitivity\":\"high\"}"</span>
+}
+</pre>
+
+<h3>设备大类列表</h3>
+<table>
+<tr><th>分类标识</th><th>中文名称</th><th>安装位置</th></tr>
+<tr><td><code>radar_fall</code></td><td>卫生间跌倒雷达</td><td>卫生间</td></tr>
+<tr><td><code>radar_bedside</code></td><td>床头心率雷达</td><td>卧室</td></tr>
+<tr><td><code>infrared</code></td><td>红外探测器</td><td>客厅</td></tr>
+<tr><td><code>door_magnet</code></td><td>门口磁开关</td><td>大门</td></tr>
+<tr><td><code>camera</code></td><td>360°摄像头</td><td>客厅</td></tr>
+<tr><td><code>sos_button</code></td><td>呼叫按钮</td><td>卫生间</td></tr>
+<tr><td><code>smoke_detector</code></td><td>烟雾报警器</td><td>厨房</td></tr>
+<tr><td><code>gas_detector</code></td><td>煤气报警器</td><td>厨房</td></tr>
+</table>
+
+<h3>POST /devices/data/report（设备上报）</h3>
+
+<p><b>方式一：Header 传参（NB-IoT直连）</b></p>
+<pre>
+<span class="key">POST</span> /api/v1/devices/data/report
+<span class="key">X-Device-SN</span>: NB202607001
+<span class="key">X-Device-Type</span>: smoke_detector
+<span class="key">Content-Type</span>: application/json
+
+{
+  <span class="key">"data"</span>: { <span class="key">"smoke_ppm"</span>: <span class="num">520</span> },
+  <span class="key">"timestamp"</span>: <span class="str">"2026-07-21T10:30:00"</span>
+}
+</pre>
+
+<p><b>方式二：Body 传参（网关转发）</b></p>
+<pre>
+{
+  <span class="key">"deviceSn"</span>: <span class="str">"NB202607001"</span>,
+  <span class="key">"deviceCategory"</span>: <span class="str">"smoke_detector"</span>,
+  <span class="key">"timestamp"</span>: <span class="str">"2026-07-21T10:30:00"</span>,
+  <span class="key">"data"</span>: { <span class="key">"smoke_ppm"</span>: <span class="num">520</span> }
+}
+</pre>
+
+<h3>POST /devices/{deviceId}/command（指令下发）</h3>
+<pre>
+{
+  <span class="key">"command"</span>: <span class="str">"close_valve"</span>,
+  <span class="key">"params"</span>: { }
+}
+</pre>
+
+<table class="param-table">
+<tr><th>设备类型</th><th>支持指令</th><th>说明</th></tr>
+<tr><td><code>gas_detector</code></td><td><code>close_valve</code> / <code>open_valve</code></td><td>关/开阀门</td></tr>
+<tr><td><code>camera</code></td><td><code>ptz</code></td><td>云台控制（预留）</td></tr>
+</table>
+
+<!-- ===================== 6. 告警管理 ===================== -->
+<h2 id="c6">6. 告警管理 Alerts</h2>
+<p class="desc">前缀 <code>/api/v1/alerts</code></p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/alerts</code></td><td>外部系统创建告警（机器间通信）</td><td><span class="auth auth-pub">公开</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/alerts</code></td><td>告警列表（分页+按级别/状态/时间筛选）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/alerts/{alertId}</code></td><td>告警详情</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/v1/alerts/{alertId}/handle</code></td><td>处理告警（标记已处理）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/alerts/rules</code></td><td>告警规则列表（分页）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/alerts/rules</code></td><td>新增告警规则</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/v1/alerts/rules/{ruleId}</code></td><td>更新告警规则</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-delete">DELETE</span></td><td><code>/api/v1/alerts/rules/{ruleId}</code></td><td>删除告警规则（仅管理员）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>GET /alerts 参数</h3>
+<table class="param-table">
+<tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+<tr><td><code>page</code></td><td>int</td><td>否</td><td>页码</td></tr>
+<tr><td><code>pageSize</code></td><td>int</td><td>否</td><td>每页数量</td></tr>
+<tr><td><code>level</code></td><td>string</td><td>否</td><td>级别: info / warning / critical / emergency</td></tr>
+<tr><td><code>status</code></td><td>int</td><td>否</td><td>处理状态: 0未处理 1已处理</td></tr>
+<tr><td><code>start</code></td><td>string</td><td>否</td><td>开始时间</td></tr>
+<tr><td><code>end</code></td><td>string</td><td>否</td><td>结束时间</td></tr>
+</table>
+
+<h3>PUT /alerts/{alertId}/handle 请求体</h3>
+<pre>
+{
+  <span class="key">"handledStatus"</span>: <span class="num">1</span>,
+  <span class="key">"handledBy"</span>: <span class="str">"护工张三"</span>,
+  <span class="key">"handleRemark"</span>: <span class="str">"已前往查看，老人正常"</span>
+}
+</pre>
+
+<h3>POST /alerts/rules 请求体</h3>
+<pre>
+{
+  <span class="key">"ruleName"</span>: <span class="str">"跌倒告警"</span>,
+  <span class="key">"ruleType"</span>: <span class="str">"fall"</span>,
+  <span class="key">"elderId"</span>: <span class="num">null</span>,
+  <span class="key">"thresholdValue"</span>: <span class="str">"{\"fall_status\":1}"</span>,
+  <span class="key">"severity"</span>: <span class="str">"emergency"</span>,
+  <span class="key">"enabled"</span>: <span class="num">1</span>,
+  <span class="key">"notifyChannels"</span>: <span class="str">"wechat,sms"</span>
+}
+</pre>
+
+<table class="param-table">
+<tr><th>ruleType 可选值</th><th>说明</th><th>severity 建议</th></tr>
+<tr><td><code>fall</code></td><td>跌倒检测</td><td>emergency</td></tr>
+<tr><td><code>heart_rate</code></td><td>心率异常（<40 或 >120）</td><td>critical</td></tr>
+<tr><td><code>breath_rate</code></td><td>呼吸异常（<10 或 >30）</td><td>warning</td></tr>
+<tr><td><code>out_of_bed</code></td><td>离床超时（>30分钟）</td><td>warning</td></tr>
+<tr><td><code>smoke</code></td><td>烟雾浓度过高</td><td>critical</td></tr>
+<tr><td><code>gas_leak</code></td><td>燃气泄漏</td><td>emergency</td></tr>
+<tr><td><code>door_open</code></td><td>门磁长时间未关</td><td>warning</td></tr>
+<tr><td><code>sos</code></td><td>SOS求救</td><td>emergency</td></tr>
+</table>
+
+<!-- ===================== 7. 雷达数据 ===================== -->
+<h2 id="c7">7. 雷达数据 Radar</h2>
+<p class="desc">前缀 <code>/api/v1/radar</code></p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/radar/data</code></td><td>雷达数据列表（分页）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/radar/data</code></td><td>接收雷达上报数据</td><td><span class="auth auth-pub">公开</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/radar/data/history</code></td><td>历史雷达数据（按设备+时间段）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/radar/devices</code></td><td>雷达设备列表</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/radar/devices/{deviceId}/status</code></td><td>设备在线状态</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>POST /radar/data 请求体</h3>
+<pre>
+{
+  <span class="key">"deviceSn"</span>: <span class="str">"RADAR-2024001"</span>,
+  <span class="key">"elderId"</span>: <span class="num">1</span>,
+  <span class="key">"fallStatus"</span>: <span class="num">0</span>,
+  <span class="key">"heartRate"</span>: <span class="num">75</span>,
+  <span class="key">"breathRate"</span>: <span class="num">18</span>,
+  <span class="key">"activityLevel"</span>: <span class="str">"light"</span>,
+  <span class="key">"inBed"</span>: <span class="num">1</span>,
+  <span class="key">"bodyPosture"</span>: <span class="str">"lying"</span>,
+  <span class="key">"timestamp"</span>: <span class="str">"2026-07-21T10:30:00"</span>
+}
+</pre>
+
+<!-- ===================== 8. 家属/小程序 ===================== -->
+<h2 id="c8">8. 家属端 / 小程序 Family</h2>
+<p class="desc">前缀 <code>/api/v1/family</code>（小程序端使用 <code>X-Family-Id</code> 头鉴权）</p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/family/register</code></td><td>家属注册/登录（wx.login获取openid后调用）</td><td><span class="auth auth-pub">公开</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/family/my-elderly</code></td><td><b>小程序首页核心接口</b>：绑定老人+雷达数据+告警数</td><td><span class="auth auth-fam">X-Family-Id</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/family/generate-bind-code</code></td><td>管理端生成6位绑定码（有效期24h）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/family/use-bind-code</code></td><td>小程序端使用绑定码绑定老人</td><td><span class="auth auth-fam">X-Family-Id</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/family/elderly/{elderlyId}</code></td><td>查询某老人的所有家属（管理端）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+<tr><td><span class="tag tag-delete">DELETE</span></td><td><code>/api/v1/family/unbind/{bindingId}</code></td><td>解除家属绑定（管理端）</td><td><span class="auth auth-jwt">JWT</span></td></tr>
+</table>
+
+<h3>POST /family/register 请求体</h3>
+<pre>
+{
+  <span class="key">"openid"</span>: <span class="str">"oXXXX-xxxxxxxxxxxxx"</span>,
+  <span class="key">"nickname"</span>: <span class="str">"张小明"</span>,
+  <span class="key">"avatarUrl"</span>: <span class="str">"https://..."</span>,
+  <span class="key">"phone"</span>: <span class="str">"13800001111"</span>
+}
+</pre>
+
+<p>响应：</p>
+<pre>
+{
+  <span class="key">"code"</span>: <span class="num">200</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"familyId"</span>: <span class="num">1</span>,
+    <span class="key">"token"</span>: <span class="str">"fam_xxx"</span>,
+    <span class="key">"isNewUser"</span>: <span class="num">false</span>
+  }
+}
+</pre>
+
+<h3>POST /family/generate-bind-code 请求体</h3>
+<pre>
+{
+  <span class="key">"elderlyId"</span>: <span class="num">1</span>,
+  <span class="key">"relation"</span>: <span class="str">"子女"</span>
+}
+</pre>
+
+<p>响应：</p>
+<pre>
+{
+  <span class="key">"code"</span>: <span class="num">200</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"bindCode"</span>: <span class="str">"A1B2C3"</span>,
+    <span class="key">"expireAt"</span>: <span class="str">"2026-07-22T10:30:00"</span>,
+    <span class="key">"elderlyName"</span>: <span class="str">"张大爷"</span>,
+    <span class="key">"roomNo"</span>: <span class="str">"101"</span>
+  }
+}
+</pre>
+
+<h3>POST /family/use-bind-code 请求体</h3>
+<pre>
+{
+  <span class="key">"bindCode"</span>: <span class="str">"A1B2C3"</span>,
+  <span class="key">"relation"</span>: <span class="str">"子女"</span>
+}
+</pre>
+
+<!-- ===================== 9. 用户管理 ===================== -->
+<h2 id="c9">9. 用户管理 Users</h2>
+<p class="desc">前缀 <code>/api/v1/users</code>（全部需管理员权限）</p>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/users</code></td><td>用户列表（分页+搜索+角色筛选）</td><td><span class="auth auth-admin">管理员</span></td></tr>
+<tr><td><span class="tag tag-post">POST</span></td><td><code>/api/v1/users</code></td><td>创建用户</td><td><span class="auth auth-admin">管理员</span></td></tr>
+<tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/v1/users/{userId}</code></td><td>更新用户信息</td><td><span class="auth auth-admin">管理员</span></td></tr>
+<tr><td><span class="tag tag-put">PUT</span></td><td><code>/api/v1/users/{userId}/status?status=0</code></td><td>启用/禁用用户</td><td><span class="auth auth-admin">管理员</span></td></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/v1/users/{userId}/elderly</code></td><td>查看用户负责的老人</td><td><span class="auth auth-admin">管理员</span></td></tr>
+</table>
+
+<h3>POST /users 请求体</h3>
+<pre>
+{
+  <span class="key">"username"</span>: <span class="str">"nurse_zhang"</span>,
+  <span class="key">"password"</span>: <span class="str">"123456"</span>,
+  <span class="key">"displayName"</span>: <span class="str">"护工张三"</span>,
+  <span class="key">"role"</span>: <span class="str">"caregiver"</span>,
+  <span class="key">"phone"</span>: <span class="str">"13800002222"</span>,
+  <span class="key">"elderlyIds"</span>: [<span class="num">1</span>, <span class="num">2</span>]
+}
+</pre>
+
+<table class="param-table">
+<tr><th>角色</th><th>说明</th><th>权限范围</th></tr>
+<tr><td><code>super_admin</code></td><td>超级管理员</td><td>全部机构、全部功能</td></tr>
+<tr><td><code>admin</code></td><td>管理员</td><td>本机构内全部功能</td></tr>
+<tr><td><code>caregiver</code></td><td>护工</td><td>仅查看自己分配的告警和老人数据</td></tr>
+</table>
+
+<h3>GET /users 参数</h3>
+<table class="param-table">
+<tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+<tr><td><code>page</code></td><td>int</td><td>否</td><td>页码</td></tr>
+<tr><td><code>pageSize</code></td><td>int</td><td>否</td><td>每页数量</td></tr>
+<tr><td><code>keyword</code></td><td>string</td><td>否</td><td>用户名/显示名模糊搜索</td></tr>
+<tr><td><code>role</code></td><td>string</td><td>否</td><td>角色筛选</td></tr>
+</table>
+
+<!-- ===================== 10. 健康检查 ===================== -->
+<h2 id="c10">10. 健康检查</h2>
+
+<table>
+<tr><th>方法</th><th>路径</th><th>说明</th><th>认证</th></tr>
+<tr><td><span class="tag tag-get">GET</span></td><td><code>/api/health</code></td><td>服务健康检查</td><td><span class="auth auth-pub">公开</span></td></tr>
+</table>
+
+<p>响应：</p>
+<pre>
+{ <span class="key">"status"</span>: <span class="str">"ok"</span>, <span class="key">"service"</span>: <span class="str">"安伴 Guardian API"</span>, <span class="key">"version"</span>: <span class="str">"1.0.0"</span> }
+</pre>
+
+<!-- ===================== 附：错误码 ===================== -->
+<h2>附：常见错误码</h2>
+<table>
+<tr><th>HTTP状态码</th><th>含义</th><th>常见原因</th></tr>
+<tr><td><code>200</code></td><td>成功</td><td></td></tr>
+<tr><td><code>400</code></td><td>请求参数错误</td><td>原密码错误/用户名已存在等</td></tr>
+<tr><td><code>401</code></td><td>未认证</td><td>Token 过期或无效、用户名密码错误</td></tr>
+<tr><td><code>403</code></td><td>无权限</td><td>非管理员访问管理接口</td></tr>
+<tr><td><code>404</code></td><td>资源不存在</td><td>ID 对应的记录不存在</td></tr>
+<tr><td><code>422</code></td><td>参数校验失败</td><td>必填字段缺失、参数类型错误、参数命名不匹配</td></tr>
+</table>
+
+<br>
+<p class="meta">安伴 Guardian v1.0 API 文档 | 共 48 个接口</p>
+
+</body>
+</html>
