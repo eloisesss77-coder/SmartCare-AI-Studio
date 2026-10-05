@@ -234,6 +234,7 @@ page {
   text-align: center;
   font-size: 30px;
   font-weight: 600;
+  box-sizing: border-box;
 
   &.btn-block { display: block; width: 100%; }
   &.btn-full { width: 100%; margin-top: 16px; }

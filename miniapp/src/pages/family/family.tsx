@@ -54,13 +54,6 @@ export default function Family() {
                 </View>
               ))}
             </View>
-
-            <Text className='section-title'>权限说明</Text>
-            <View className='card'>
-              <Text className='perm-item'>① 家庭管理员可查看所有老人数据并管理设备</Text>
-              <Text className='perm-item'>② 普通成员按授权范围查看对应老人</Text>
-              <Text className='perm-item'>③ 告警通知按老人和成员分别订阅</Text>
-            </View>
           </>
         )}
         <View style={{ height: '40px' }} />
